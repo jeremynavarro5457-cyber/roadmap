@@ -52,6 +52,8 @@ a.card:hover,.card.click:hover{border-color:var(--border-strong)}
 .mod i{width:8px;height:8px;border-radius:50%}
 .av{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-weight:600;flex-shrink:0}
 .av.none{border:1px dashed var(--border-strong);color:var(--subtle)}
+.cpill{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-hover);font-size:12px;font-weight:600;white-space:nowrap}
+.cpill:hover{background:#E0E7FF}
 .tag{font-size:12px;color:var(--subtle);font-weight:500}
 .progress{height:6px;background:var(--border);border-radius:999px;overflow:hidden}
 .progress b{display:block;height:100%;background:#16A34A}
@@ -60,8 +62,8 @@ a.card:hover,.card.click:hover{border-color:var(--border-strong)}
 .row:first-child{border-top:0}
 a.row:hover{background:var(--surface-hover)}
 .row.th{min-height:34px;font-size:12px;font-weight:500;color:var(--subtle);text-transform:uppercase;letter-spacing:.04em;background:var(--sidebar)}
-.cols-f{grid-template-columns:minmax(180px,1fr) 110px 100px 130px 40px 70px 32px}
-.cols-b{grid-template-columns:minmax(180px,1fr) 90px 110px 100px 130px 40px 32px}
+.cols-f{grid-template-columns:minmax(180px,1fr) 110px 100px 130px 50px 110px 32px}
+.cols-b{grid-template-columns:minmax(180px,1fr) 90px 110px 100px 130px 50px 110px 32px}
 .title{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
@@ -190,7 +192,7 @@ function prio(p){const [l,c,n]=PR[p];
 const mod=id=>{const m=MODULES[id];return m?`<span class="mod"><i style="background:${m.c}"></i>${m.n}</span>`:""};
 const av=id=>{const p=PEOPLE[id];return p?`<span class="av" title="${p.n}" style="background:${p.c}">${p.i}</span>`:`<span class="av none" title="Non assigné">–</span>`};
 const ncom=id=>COMMENTS.filter(c=>c.f===id).length;
-const comIco=n=>n?`<span class="tag">💬 ${n}</span>`:`<span class="tag"></span>`;
+const comIco=n=>n?`<span class="cpill" title="${n} commentaire${n>1?'s':''}">💬 ${n}</span>`:`<span class="tag" title="Aucun commentaire">💬 0</span>`;
 const sprintName=s=>`Sprint ${s.id}`;
 const sprintFeat=id=>FEATURES.filter(f=>f.sprint===id);
 const pct=id=>{const fs=sprintFeat(id).filter(f=>f.status!=='cancelled');return fs.length?Math.round(100*fs.filter(f=>f.status==='done').length/fs.length):0};
@@ -213,7 +215,7 @@ const featRow=(f,showSprint)=>`<a class="row ${showSprint?'cols-b':'cols-f'}" hr
   <span class="title">${esc(f.title)}</span>
   ${showSprint?`<span class="tag hm">${f.sprint?'Sprint '+f.sprint:'—'}</span>`:''}
   <span>${badge(f.status)}</span><span class="hm">${prio(f.priority)}</span><span class="hm">${mod(f.module)}</span>
-  <span class="tag hm">${EFF[f.effort]||''}</span>${showSprint?'':`<span class="hm">${comIco(ncom(f.id))}</span>`}<span class="hm">${av(f.who)}</span></a>`;
+  <span class="tag hm">${EFF[f.effort]||''}</span><span class="hm">${comIco(ncom(f.id))}</span><span class="hm">${av(f.who)}</span></a>`;
 
 const V={
 login(){return `<div class="login"><div class="card" style="width:100%;max-width:360px;padding:32px">
@@ -258,7 +260,7 @@ sprint(id){
   if(state.fMod)fs=fs.filter(f=>f.module==state.fMod);
   if(state.fPrio)fs=fs.filter(f=>f.priority===state.fPrio);
   const body=state.view==="list"
-   ?`<div class="list"><div class="row th cols-f"><span>Feature</span><span>Statut</span><span class="hm">Priorité</span><span class="hm">Module</span><span class="hm">Effort</span><span class="hm">Com.</span><span class="hm"></span></div>${fs.map(f=>featRow(f)).join("")||'<div class="empty">Aucune feature.</div>'}</div>`
+   ?`<div class="list"><div class="row th cols-f"><span>Feature</span><span>Statut</span><span class="hm">Priorité</span><span class="hm">Module</span><span class="hm">Effort</span><span class="hm">Commentaires</span><span class="hm"></span></div>${fs.map(f=>featRow(f)).join("")||'<div class="empty">Aucune feature.</div>'}</div>`
    :`<div class="board">${["todo","in_progress","done"].map(k=>{const col=fs.filter(f=>f.status===k);return `<div><div class="colh">${badge(k)}<span class="tag">${col.length}</span></div><div class="col">${col.map(f=>`<a class="card fcard" href="#/feature/${f.id}"><div class="title">${esc(f.title)}</div><div class="meta" style="gap:10px">${prio(f.priority)}${mod(f.module)}<span style="margin-left:auto" class="meta">${comIco(ncom(f.id))}${av(f.who)}</span></div></a>`).join("")}</div></div>`}).join("")}</div>`;
   return shell("sprints",`<div class="crumbs"><a href="#/sprints">Sprints</a> › ${sprintName(s)}</div>
   <div class="head"><div><div class="meta"><h1>${sprintName(s)}</h1>${sbadge(s.status)}</div><div class="sub">${esc(s.goal)} · ${d(s.start)} → ${d(s.end)}</div>
@@ -283,7 +285,7 @@ backlog(){
    <select class="field" onchange="set({fPrio:this.value})"><option value="">Toutes priorités</option>${PR_ORDER.map(k=>`<option value="${k}" ${state.fPrio===k?'selected':''}>${PR[k][0]}</option>`).join("")}</select>
    <button class="btn ${state.noSprint?'primary':''}" onclick="set({noSprint:!state.noSprint})">Sans sprint</button>
    <span class="tag">${fs.length} résultat${fs.length>1?'s':''}</span></div>
-  <div class="list"><div class="row th cols-b"><span>Feature</span><span class="hm">Sprint</span><span>Statut</span><span class="hm">Priorité</span><span class="hm">Module</span><span class="hm">Effort</span><span class="hm"></span></div>${fs.map(f=>featRow(f,true)).join("")||'<div class="empty">Aucune feature ne correspond.</div>'}</div>`)},
+  <div class="list"><div class="row th cols-b"><span>Feature</span><span class="hm">Sprint</span><span>Statut</span><span class="hm">Priorité</span><span class="hm">Module</span><span class="hm">Effort</span><span class="hm">Commentaires</span><span class="hm"></span></div>${fs.map(f=>featRow(f,true)).join("")||'<div class="empty">Aucune feature ne correspond.</div>'}</div>`)},
 
 modules(){
   return shell("modules",`<div class="head"><div><h1>Modules</h1><div class="sub">Les grandes zones fonctionnelles du produit.</div></div><button class="btn primary" onclick="toast('Création de module : pas encore disponible dans le prototype')">＋ Nouveau module</button></div>
@@ -298,11 +300,11 @@ feature(id){
   const sel=(key,opts)=>`<select class="field" onchange="upd(${f.id},'${key}',this.value)">${opts}</select>`;
   return shell(s?"sprints":"backlog",`<div class="crumbs">${s?`<a href="#/sprints">Sprints</a> › <a href="#/sprint/${s.id}">${sprintName(s)}</a>`:`<a href="#/backlog">Backlog</a>`} › ${esc(f.title)}</div>
   <div class="head"><div><h1>${esc(f.title)}</h1><div class="meta" style="margin-top:8px">${badge(f.status)}${prio(f.priority)}${mod(f.module)}</div></div>
-   <div class="meta"><a class="btn" href="#/feature/${f.id}/edit">Modifier</a></div></div>
+   <div class="meta"><button class="btn" onclick="document.getElementById('comments').scrollIntoView({behavior:'smooth'});document.getElementById('newc').focus({preventScroll:true})">💬 ${cs.length} commentaire${cs.length>1?'s':''}</button><a class="btn" href="#/feature/${f.id}/edit">Modifier</a></div></div>
   <div class="grid g2" style="align-items:start">
    <div class="grid" style="gap:24px">
     <div class="card"><h2>Description</h2><p style="margin:0;color:var(--muted)">${esc(f.description||'Pas de description.')}</p></div>
-    <div class="card" id="comments"><h2>Commentaires <span class="tag">${cs.length}</span></h2>
+    <div class="card" id="comments" style="border-color:#C7D2FE"><h2>💬 Commentaires <span class="cpill">${cs.length}</span></h2>
      ${cs.map(c=>`<div class="comment">${av(c.a)}<div><div><span class="cname">${PEOPLE[c.a].n}</span> <span class="tag">· ${c.d}</span></div><div style="margin-top:2px">${esc(c.t)}</div></div></div>`).join("")||'<div class="empty" style="padding:8px 0 16px;text-align:left">Aucun commentaire pour l\'instant. Lancez la discussion !</div>'}
      <div class="comment" style="border-top:1px solid var(--border)">${av(ME)}<div style="flex:1"><textarea class="field" id="newc" placeholder="Écrire un commentaire…" style="min-height:72px"></textarea><div style="text-align:right;margin-top:8px"><button class="btn primary" onclick="addC(${f.id})">Commenter</button></div></div></div>
     </div>
