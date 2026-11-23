@@ -1,0 +1,112 @@
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { MessageSquare, Pencil } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { PageHeader } from "@/components/page-header"
+import { StatusBadge, PriorityBadge, ModuleDot, Avatar, CommentCount } from "@/components/badges"
+import { FieldSelect } from "@/components/field-select"
+import { CommentForm } from "@/components/comment-form"
+import { createClient } from "@/lib/supabase/server"
+import { getProfiles, getSprints } from "@/lib/data"
+import {
+  FEATURE_STATUSES, STATUS_STYLES, PRIORITIES, PRIORITY_STYLES, SPRINT_STATUS_STYLES,
+  EFFORT_LABELS, IMPACT_LABELS, formatDate, fullName,
+} from "@/lib/labels"
+
+export default async function FeaturePage({ params }: PageProps<"/features/[id]">) {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data: feature } = await supabase
+    .from("features")
+    .select("*, module:modules(name, color), comments(id, content, created_at, author:profiles(firstname, lastname))")
+    .eq("id", Number(id))
+    .order("created_at", { referencedTable: "comments" })
+    .order("id", { referencedTable: "comments" })
+    .maybeSingle()
+  if (!feature) notFound()
+
+  const [sprints, profiles] = await Promise.all([getSprints(), getProfiles()])
+  const comments = feature.comments
+  const people = profiles.filter((p) => p.firstname || p.lastname)
+
+  // Le fil d'Ariane ramène au sprint si la feature en a un, sinon au backlog
+  const crumbs = feature.sprint_id
+    ? [{ href: "/sprints", label: "Sprints" }, { href: `/sprints/${feature.sprint_id}`, label: `Sprint ${feature.sprint_id}` }]
+    : [{ href: "/backlog", label: "Backlog" }]
+
+  return (
+    <>
+      <PageHeader
+        crumbs={[...crumbs, { label: feature.title }]}
+        title={feature.title}
+        actions={
+          <>
+            {/* Retour test utilisateur : accès direct aux commentaires depuis le haut de la page */}
+            <Button variant="outline" asChild>
+              <a href="#commentaires"><MessageSquare /> {comments.length} commentaire{comments.length > 1 ? "s" : ""}</a>
+            </Button>
+            <Button variant="outline" asChild><Link href={`/features/${feature.id}/edit`}><Pencil /> Modifier</Link></Button>
+          </>
+        }
+      >
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <StatusBadge status={feature.status} />
+          <PriorityBadge priority={feature.priority} />
+          <ModuleDot module={feature.module} />
+        </div>
+      </PageHeader>
+
+      <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr]">
+        <div className="grid gap-6">
+          <Card className="gap-3 p-4">
+            <h2 className="text-base font-semibold">Description</h2>
+            <p className="text-sm text-muted-foreground">{feature.description || "Pas de description."}</p>
+          </Card>
+
+          <Card id="commentaires" className="scroll-mt-6 gap-0 border-sprint-active-bg p-4">
+            <h2 className="mb-2 flex items-center gap-2 text-base font-semibold">
+              <MessageSquare className="size-4" aria-hidden /> Commentaires <CommentCount count={comments.length} />
+            </h2>
+            {comments.length === 0 && <p className="py-2 text-sm text-subtle">Aucun commentaire pour l&apos;instant. Lancez la discussion !</p>}
+            <ul>
+              {comments.map((c) => (
+                <li key={c.id} className="flex gap-2.5 border-t py-3.5 first:border-t-0">
+                  <Avatar person={c.author} />
+                  <div className="text-sm">
+                    <span className="font-medium">{fullName(c.author)}</span>{" "}
+                    <span className="text-xs text-subtle">· {formatDate(c.created_at)}</span>
+                    <p className="mt-0.5">{c.content}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <CommentForm featureId={feature.id} people={people.map((p) => ({ id: p.id, name: fullName(p) }))} />
+          </Card>
+        </div>
+
+        <Card className="gap-3 p-4">
+          <h2 className="text-base font-semibold">Détails</h2>
+          <dl className="grid grid-cols-[100px_1fr] items-center gap-x-2 gap-y-3 text-sm">
+            <dt className="text-xs font-medium text-subtle">Statut</dt>
+            <dd><FieldSelect featureId={feature.id} field="status" value={feature.status} label="Statut"
+              options={FEATURE_STATUSES.map((s) => ({ value: s, label: STATUS_STYLES[s].label }))} /></dd>
+            <dt className="text-xs font-medium text-subtle">Priorité</dt>
+            <dd><FieldSelect featureId={feature.id} field="priority" value={feature.priority} label="Priorité"
+              options={PRIORITIES.map((p) => ({ value: p, label: PRIORITY_STYLES[p].label }))} /></dd>
+            <dt className="text-xs font-medium text-subtle">Sprint</dt>
+            <dd><FieldSelect featureId={feature.id} field="sprint_id" value={feature.sprint_id ? String(feature.sprint_id) : ""} label="Sprint" emptyLabel="Aucun (backlog)"
+              options={sprints.map((s) => ({ value: String(s.id), label: `Sprint ${s.id} · ${SPRINT_STATUS_STYLES[s.status].label}` }))} /></dd>
+            <dt className="text-xs font-medium text-subtle">Assigné à</dt>
+            <dd><FieldSelect featureId={feature.id} field="assigned_to" value={feature.assigned_to ?? ""} label="Assigné à" emptyLabel="Non assigné"
+              options={people.map((p) => ({ value: p.id, label: fullName(p) }))} /></dd>
+            <dt className="text-xs font-medium text-subtle">Module</dt><dd><ModuleDot module={feature.module} /></dd>
+            <dt className="text-xs font-medium text-subtle">Effort</dt><dd>{feature.effort ? EFFORT_LABELS[feature.effort] : "—"}</dd>
+            <dt className="text-xs font-medium text-subtle">Impact</dt><dd>{IMPACT_LABELS[feature.impact]}</dd>
+            <dt className="text-xs font-medium text-subtle">Créée le</dt><dd className="text-subtle">{formatDate(feature.created_at)}</dd>
+          </dl>
+        </Card>
+      </div>
+    </>
+  )
+}
