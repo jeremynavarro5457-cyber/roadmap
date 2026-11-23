@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F7F5;--surface:#FFF;--surface-hover:#F2F2EF;--sidebar:#FBFBFA;
+  --border:#E7E5E4;--border-strong:#D6D3D1;--text:#1C1917;--muted:#57534E;--subtle:#A8A29E;
+  --accent:#4F46E5;--accent-hover:#4338CA;--accent-soft:#EEF2FF;--danger:#DC2626;
+  --r-sm:4px;--r-md:6px;--r-lg:10px;--shadow-sm:0 1px 2px rgba(28,25,23,.05);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/20px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:flex;min-height:100vh}
+aside{width:232px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:8px;font-weight:600;padding:4px 8px 16px}
+.logo i{width:22px;height:22px;border-radius:6px;background:var(--accent);display:grid;place-items:center;color:#fff;font-style:normal;font-size:12px}
+.nav{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:var(--r-md);color:var(--muted);font-weight:500}
+.nav:hover{background:var(--surface-hover)}
+.nav.on{background:var(--accent-soft);color:var(--accent-hover)}
+.nav .count{margin-left:auto;font-size:12px;color:var(--subtle)}
+.me{margin-top:auto;display:flex;align-items:center;gap:8px;padding:8px;border-top:1px solid var(--border);padding-top:12px}
+main{flex:1;min-width:0;padding:24px 32px 48px}
+.crumbs{font-size:12px;color:var(--subtle);margin-bottom:8px;font-weight:500}
+.crumbs a{color:var(--muted)}.crumbs a:hover{color:var(--accent)}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+h1{font-size:22px;line-height:28px;font-weight:600;margin:0}
+h2{font-size:16px;line-height:24px;font-weight:600;margin:0 0 12px}
+.sub{color:var(--muted);margin-top:4px}
+.btn{height:32px;padding:0 12px;border-radius:var(--r-md);border:1px solid var(--border-strong);background:var(--surface);font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--surface-hover)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-hover)}
+.btn.ghost{border-color:transparent;background:none;color:var(--muted)}
+.btn:focus-visible,.field:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow-sm)}
+a.card:hover,.card.click:hover{border-color:var(--border-strong)}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g2{grid-template-columns:2fr 1fr}
+@media(max-width:900px){.g2{grid-template-columns:1fr}}
+.badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:var(--r-sm);font-size:12px;font-weight:500;white-space:nowrap}
+.badge .dot{width:6px;height:6px;border-radius:50%}
+.prio{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
+.prio.crit{background:#FEE2E2;color:#991B1B;padding:0 6px;height:22px;border-radius:var(--r-sm)}
+.mod{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
+.mod i{width:8px;height:8px;border-radius:50%}
+.av{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-weight:600;flex-shrink:0}
+.av.none{border:1px dashed var(--border-strong);color:var(--subtle)}
+.tag{font-size:12px;color:var(--subtle);font-weight:500}
+.progress{height:6px;background:var(--border);border-radius:999px;overflow:hidden}
+.progress b{display:block;height:100%;background:#16A34A}
+.list{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.row{display:grid;align-items:center;gap:12px;min-height:44px;padding:6px 16px;border-top:1px solid var(--border)}
+.row:first-child{border-top:0}
+a.row:hover{background:var(--surface-hover)}
+.row.th{min-height:34px;font-size:12px;font-weight:500;color:var(--subtle);text-transform:uppercase;letter-spacing:.04em;background:var(--sidebar)}
+.cols-f{grid-template-columns:minmax(180px,1fr) 110px 100px 130px 40px 70px 32px}
+.cols-b{grid-template-columns:minmax(180px,1fr) 90px 110px 100px 130px 40px 32px}
+.title{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.seg{display:inline-flex;border:1px solid var(--border-strong);border-radius:var(--r-md);overflow:hidden}
+.seg button{border:0;background:var(--surface);height:30px;padding:0 12px;cursor:pointer;color:var(--muted);font-weight:500}
+.seg button.on{background:var(--accent-soft);color:var(--accent-hover)}
+.field{height:36px;padding:0 10px;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r-md);min-width:0}
+.field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.field{height:auto;min-height:96px;padding:8px 10px;resize:vertical;width:100%}
+label.l{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:500;color:var(--muted)}
+label.l .field{width:100%;color:var(--text);font-size:14px}
+.board{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:16px;overflow-x:auto}
+.colh{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:8px;font-size:13px}
+.col{background:#EFEEEB;border-radius:var(--r-lg);padding:8px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.fcard{padding:12px}
+.fcard .title{white-space:normal;margin-bottom:10px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:12px 8px;align-items:center}
+.kv dt{color:var(--subtle);font-size:12px;font-weight:500}
+.kv dd{margin:0}
+.kv select{height:30px}
+.comment{display:flex;gap:10px;padding:14px 0;border-top:1px solid var(--border)}
+.comment:first-of-type{border-top:0}
+.cname{font-weight:500}
+.stat{font-size:22px;font-weight:600;line-height:28px}
+.empty{color:var(--subtle);padding:16px;text-align:center}
+.login{min-height:100vh;display:grid;place-items:center;padding:16px}
+.hint{position:fixed;bottom:16px;right:16px;background:var(--text);color:#fff;padding:8px 12px;border-radius:var(--r-md);font-size:12px;opacity:0;transition:.2s;pointer-events:none}
+.hint.show{opacity:1}
+@media(max-width:760px){
+  .app{flex-direction:column}
+  aside{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap;padding:8px}
+  .logo{padding:4px 8px}.me,.nav .count{display:none}
+  main{padding:16px}
+  .cols-f,.cols-b{grid-template-columns:1fr auto}
+  .row>.hm{display:none}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="hint" id="hint"></div>
+<script>
+// ---- Données réelles extraites de Supabase « Roadmap » ----
+const PEOPLE={
+ "7b45ad0c":{n:"Marie Laurent",i:"ML",c:"#E0E7FF"},
+ "651f705b":{n:"Thomas Renard",i:"TR",c:"#FFE4E6"},
+ "215e05a2":{n:"Sarah Kessler",i:"SK",c:"#DCFCE7"},
+ "d0257c47":{n:"Lucas Martin",i:"LM",c:"#FEF3C7"}};
+const ME="7b45ad0c";
+const MODULES={1:{n:"Facturation",c:"#E8634A",d:"Factures, paiements, avoirs et relances."},2:{n:"Onboarding",c:"#4A90D9",d:"Premiers pas des nouveaux utilisateurs."},3:{n:"Dashboard",c:"#6C5CE7",d:"Tableau de bord et widgets."},4:{n:"Notifications",c:"#00B894",d:"Emails, in-app et push."},5:{n:"Gestion des accès",c:"#F39C12",d:"Rôles, invitations, SSO."}};
+const SPRINTS=[
+ {id:1,goal:"Refonte du dashboard et corrections critiques",start:"2026-01-26",end:"2026-02-06",status:"completed"},
+ {id:2,goal:"Stabiliser la facturation et lancer les notifications",start:"2026-02-09",end:"2026-02-20",status:"active"},
+ {id:3,goal:"Onboarding V2 et gestion des accès",start:"2026-02-23",end:"2026-03-06",status:"planned"}];
+const F=(id,title,description,status,priority,effort,impact,module,sprint,who,created)=>({id,title,description,status,priority,effort,impact,module,sprint,who,created:created||"2026-01-20"});
+const FEATURES=[
+ F(2,"Refonte layout dashboard","Réorganiser la disposition des widgets du dashboard pour améliorer la lisibilité.","done","high","l","high",3,1,"7b45ad0c"),
+ F(3,"Fix calcul TVA multi-pays","Le calcul de la TVA est incorrect pour les clients en Belgique et au Luxembourg.","done","critical","s","high",1,1,"651f705b"),
+ F(4,"Widget activité récente","Ajouter un widget affichant les 10 dernières actions de l'utilisateur sur le dashboard.","done","medium","m","medium",3,1,"7b45ad0c"),
+ F(5,"Export PDF des factures","Permettre aux utilisateurs d'exporter leurs factures en PDF avec le logo de leur entreprise.","in_progress","high","m","high",1,2,"7b45ad0c"),
+ F(6,"Stripe webhook retry","Gérer les retries automatiques des webhooks Stripe en cas d'échec de réception.","todo","critical","s","high",1,2,"651f705b"),
+ F(7,"Préférences de notification","Permettre aux utilisateurs de choisir quelles notifications ils souhaitent recevoir par email.","in_progress","medium","s","high",4,2,"d0257c47"),
+ F(8,"Graphiques de progression","Ajouter des graphiques de suivi de progression des objectifs sur le dashboard.","todo","medium","m","medium",3,2,"7b45ad0c"),
+ F(9,"Email de bienvenue personnalisé","Envoyer un email de bienvenue personnalisé avec le prénom et un guide de démarrage.","done","medium","xs","medium",2,2,"215e05a2"),
+ F(10,"Wizard onboarding multi-étapes","Créer un parcours d'onboarding guidé en 5 étapes pour les nouveaux utilisateurs.","todo","high","xl","high",2,3,null),
+ F(11,"Avoir / note de crédit","Gérer la création d'avoirs et notes de crédit liés à une facture existante.","todo","high","l","medium",1,3,"651f705b"),
+ F(12,"Invitation par email","Permettre à un admin d'inviter de nouveaux membres par email avec attribution d'un rôle.","todo","high","m","high",5,3,null),
+ F(13,"Page de gestion des rôles","Interface pour créer et gérer les rôles (admin, éditeur, lecteur) et leurs permissions.","todo","medium","l","medium",5,3,null),
+ F(14,"Relance automatique impayés","Automatiser l'envoi d'emails de relance pour les factures impayées après 7, 14 et 30 jours.","backlog","high","l","high",1,null,null),
+ F(15,"Widget analytics temps réel","Afficher les métriques clés (utilisateurs actifs, revenus) en temps réel sur le dashboard.","backlog","medium","l","medium",3,null,null),
+ F(16,"Thème sombre","Proposer un mode sombre pour l'ensemble de l'interface.","backlog","low","m","low",3,null,null),
+ F(17,"Notifications push mobile","Envoyer des notifications push sur l'application mobile via Firebase.","backlog","nice_to_have","xl","medium",4,null,null),
+ F(18,"Import CSV contacts","Permettre l'import de contacts depuis un fichier CSV lors de l'onboarding.","backlog","low","m","low",2,null,null),
+ F(19,"Historique des modifications de facture","Tracer toutes les modifications apportées à une facture avec horodatage et auteur.","backlog","medium","m","medium",1,null,null),
+ F(20,"Tableau de bord admin multi-équipes","Dashboard spécifique pour les admins avec vue consolidée sur toutes les équipes.","backlog","nice_to_have","xl","low",3,null,null),
+ F(21,"SSO Google / Microsoft","Permettre la connexion via SSO Google Workspace et Microsoft Entra.","backlog","medium","l","high",5,null,null)];
+const C=(f,a,t,d)=>({f,a,t,d});
+const COMMENTS=[
+ C(5,"651f705b","On devrait prioriser ça pour le sprint en cours, le client Acme en a besoin avant fin février.","10 fév."),
+ C(5,"7b45ad0c","J'ai commencé à regarder, c'est faisable en 2-3 jours max. Je pars sur la lib react-pdf.","11 fév."),
+ C(5,"215e05a2","Pense à inclure le logo de l'entreprise du client dans le header du PDF.","11 fév."),
+ C(6,"7b45ad0c","On a perdu 3 paiements cette semaine à cause de ça. C'est vraiment critique.","9 fév."),
+ C(6,"651f705b","Je propose un retry exponentiel : 1min, 5min, 30min, 2h. Au-delà on alerte par email.","9 fév."),
+ C(6,"d0257c47","Il faut aussi logger chaque tentative pour le debug.","10 fév."),
+ C(6,"651f705b","Stripe recommande un maximum de 5 retries sur 24h. On suit ça.","10 fév."),
+ C(6,"215e05a2","Validé. Thomas, tu prends le lead là-dessus ?","12 fév."),
+ C(10,"215e05a2","Les 5 étapes proposées : profil, entreprise, import données, intégrations, tutoriel.","2 fév."),
+ C(10,"7b45ad0c","On pourrait ajouter une barre de progression pour motiver l'utilisateur à finir.","3 fév."),
+ C(10,"d0257c47","Est-ce qu'on permet de skipper des étapes ou c'est obligatoire ?","3 fév."),
+ C(10,"215e05a2","Skipper oui, mais avec un rappel dans le dashboard tant que c'est pas complété.","4 fév."),
+ C(10,"7b45ad0c","J'ai fait un benchmark de 5 SaaS concurrents, je partage le doc demain.","5 fév."),
+ C(10,"651f705b","Attention au mobile, le wizard doit être responsive dès le départ.","6 fév."),
+ C(10,"215e05a2","Les analytics montrent que 40% des churns arrivent dans la première semaine. Ce wizard est clé.","9 fév."),
+ C(10,"215e05a2","OK on en fait la priorité du sprint 15.","9 fév."),
+ C(14,"7b45ad0c","Il faudrait 3 paliers : relance douce à J+7, ferme à J+14, mise en demeure à J+30.","28 janv."),
+ C(14,"215e05a2","On doit vérifier les contraintes légales sur les relances automatiques.","29 janv."),
+ C(14,"651f705b","J'ai trouvé un template d'email de relance qui convertit bien, je le partage.","30 janv."),
+ C(14,"d0257c47","Est-ce qu'on bloque l'accès au compte après X jours d'impayé ?","2 fév."),
+ C(11,"7b45ad0c","Le comptable du client Dupont a demandé cette feature 3 fois ce mois-ci.","3 fév."),
+ C(11,"651f705b","Il faut que l'avoir référence la facture d'origine et qu'il ait son propre numéro séquentiel.","4 fév."),
+ C(11,"215e05a2","Attention aux implications comptables : un avoir doit apparaître dans le journal des ventes.","4 fév."),
+ C(11,"651f705b","Je propose qu'on gère aussi l'avoir partiel (remboursement d'une seule ligne de facture).","5 fév."),
+ C(11,"215e05a2","Bonne idée Thomas. On ajoute ça au scope du sprint 15.","5 fév."),
+ C(11,"7b45ad0c","L'export PDF de l'avoir devra suivre le même template que les factures.","6 fév."),
+ C(7,"d0257c47","Les catégories de notification à gérer : facturation, équipe, système, marketing.","10 fév."),
+ C(7,"215e05a2","Il faut un toggle par catégorie ET par canal (email, in-app).","11 fév."),
+ C(21,"215e05a2","Plusieurs prospects enterprise ont demandé le SSO comme condition pour signer.","20 janv."),
+ C(21,"d0257c47","On pourrait commencer par Google seulement, Microsoft dans un second temps.","21 janv.")];
+
+// ---- Référentiels du design system ----
+const ST={backlog:["Backlog","#A8A29E","#F5F5F4","#57534E"],todo:["À faire","#64748B","#F1F5F9","#334155"],in_progress:["En cours","#D97706","#FEF3C7","#92400E"],done:["Terminé","#16A34A","#DCFCE7","#166534"],cancelled:["Annulé","#A8A29E","#F5F5F4","#78716C"]};
+const SST={planned:["Planifié","#64748B","#F1F5F9","#334155"],active:["Actif","#4F46E5","#EEF2FF","#4338CA"],completed:["Terminé","#16A34A","#DCFCE7","#166534"]};
+const PR={critical:["Critique","#DC2626",3],high:["Haute","#EA580C",3],medium:["Moyenne","#CA8A04",2],low:["Basse","#64748B",1],nice_to_have:["Bonus","#A8A29E",0]};
+const PR_ORDER=Object.keys(PR);
+const EFF={xs:"XS",s:"S",m:"M",l:"L",xl:"XL"},IMP={low:"Faible",medium:"Moyen",high:"Fort"};
+const MONTHS=["janv.","fév.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const d=s=>{const x=new Date(s);return x.getDate()+" "+MONTHS[x.getMonth()]};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const badge=s=>{const v=ST[s];return `<span class="badge" style="background:${v[2]};color:${v[3]}${s==='cancelled'?';text-decoration:line-through':''}"><span class="dot" style="background:${v[1]}"></span>${v[0]}</span>`};
+const sbadge=s=>{const v=SST[s];return `<span class="badge" style="background:${v[2]};color:${v[3]}"><span class="dot" style="background:${v[1]}"></span>${v[0]}</span>`};
+function prio(p){const [l,c,n]=PR[p];
+  if(p==='critical')return `<span class="prio crit"><svg width="12" height="12" viewBox="0 0 12 12"><rect width="12" height="12" rx="2" fill="${c}"/><rect x="5.2" y="2.5" width="1.6" height="4.5" fill="#fff"/><rect x="5.2" y="8" width="1.6" height="1.6" fill="#fff"/></svg>${l}</span>`;
+  let bars="";for(let i=0;i<3;i++){const h=4+i*3;bars+=`<rect x="${i*4.5}" y="${12-h}" width="3" height="${h}" rx=".8" fill="${i<n?c:'#E7E5E4'}" ${n===0?`stroke="${c}" stroke-dasharray="1.5 1.2" stroke-width=".8" fill="none"`:''}/>`}
+  return `<span class="prio"><svg width="13" height="12">${bars}</svg>${l}</span>`}
+const mod=id=>{const m=MODULES[id];return m?`<span class="mod"><i style="background:${m.c}"></i>${m.n}</span>`:""};
+const av=id=>{const p=PEOPLE[id];return p?`<span class="av" title="${p.n}" style="background:${p.c}">${p.i}</span>`:`<span class="av none" title="Non assigné">–</span>`};
+const ncom=id=>COMMENTS.filter(c=>c.f===id).length;
+const comIco=n=>n?`<span class="tag">💬 ${n}</span>`:`<span class="tag"></span>`;
+const sprintName=s=>`Sprint ${s.id}`;
+const sprintFeat=id=>FEATURES.filter(f=>f.sprint===id);
+const pct=id=>{const fs=sprintFeat(id).filter(f=>f.status!=='cancelled');return fs.length?Math.round(100*fs.filter(f=>f.status==='done').length/fs.length):0};
+const sort=fs=>[...fs].sort((a,b)=>PR_ORDER.indexOf(a.priority)-PR_ORDER.indexOf(b.priority));
+
+let state={view:"list",q:"",fMod:"",fStat:"",fPrio:"",noSprint:false,logged:true};
+
+function shell(active,html){
+  const nav=(h,k,label,ico,cnt="")=>`<a class="nav ${active===k?'on':''}" href="#/${h}"><span>${ico}</span>${label}<span class="count">${cnt}</span></a>`;
+  return `<div class="app"><aside>
+   <div class="logo"><i>R</i>Roadmap</div>
+   ${nav("","home","Tableau de bord","◧")}
+   ${nav("sprints","sprints","Sprints","◷",SPRINTS.length)}
+   ${nav("backlog","backlog","Backlog","☰",FEATURES.length)}
+   ${nav("modules","modules","Modules","◈",Object.keys(MODULES).length)}
+   <a class="me" href="#/login" title="Se déconnecter">${av(ME)}<span><b style="font-weight:500">${PEOPLE[ME].n}</b><br><span class="tag">Déconnexion</span></span></a>
+  </aside><main>${html}</main></div>`}
+
+const featRow=(f,showSprint)=>`<a class="row ${showSprint?'cols-b':'cols-f'}" href="#/feature/${f.id}">
+  <span class="title">${esc(f.title)}</span>
+  ${showSprint?`<span class="tag hm">${f.sprint?'Sprint '+f.sprint:'—'}</span>`:''}
+  <span>${badge(f.status)}</span><span class="hm">${prio(f.priority)}</span><span class="hm">${mod(f.module)}</span>
+  <span class="tag hm">${EFF[f.effort]||''}</span>${showSprint?'':`<span class="hm">${comIco(ncom(f.id))}</span>`}<span class="hm">${av(f.who)}</span></a>`;
+
+const V={
+login(){return `<div class="login"><div class="card" style="width:100%;max-width:360px;padding:32px">
+  <div class="logo" style="padding:0 0 24px"><i>R</i>Roadmap</div>
+  <h1 style="margin-bottom:4px">Connexion</h1><p class="sub" style="margin:0 0 24px">Accédez à la roadmap de votre équipe.</p>
+  <div class="grid" style="gap:16px"><label class="l">Email<input class="field" value="marie.laurent@exemple.fr"></label>
+  <label class="l">Mot de passe<input class="field" type="password" value="motdepasse"></label>
+  <a class="btn primary" href="#/" style="justify-content:center;height:36px">Se connecter</a></div></div></div>`},
+
+home(){
+  const s=SPRINTS.find(x=>x.status==='active'),fs=sprintFeat(s.id);
+  const mine=sort(FEATURES.filter(f=>f.who===ME&&f.status!=='done'));
+  const counts=["todo","in_progress","done"].map(k=>`<div><div class="stat">${fs.filter(f=>f.status===k).length}</div>${badge(k)}</div>`).join("");
+  const last=COMMENTS.slice(-4).reverse();
+  return shell("home",`<div class="head"><div><h1>Bonjour Marie 👋</h1><div class="sub">Voici où en est l'équipe aujourd'hui.</div></div>
+   <a class="btn primary" href="#/feature/new">＋ Nouvelle feature</a></div>
+  <div class="grid g2">
+   <div class="grid">
+    <a class="card" href="#/sprint/${s.id}">
+     <div class="meta" style="justify-content:space-between;margin-bottom:8px"><span class="tag">SPRINT ACTIF</span>${sbadge(s.status)}</div>
+     <h2 style="margin-bottom:4px">${sprintName(s)} · ${esc(s.goal)}</h2>
+     <div class="sub" style="margin:0 0 16px">${d(s.start)} → ${d(s.end)} · ${fs.length} features</div>
+     <div class="meta" style="gap:32px;margin-bottom:16px">${counts}</div>
+     <div class="progress"><b style="width:${pct(s.id)}%"></b></div>
+     <div class="meta" style="justify-content:space-between;margin-top:8px"><span class="tag">${pct(s.id)} % terminé</span><span style="color:var(--accent);font-weight:500">Voir les features du sprint →</span></div>
+    </a>
+    <div><h2>Mes features en cours</h2><div class="list">${mine.map(f=>featRow(f)).join("")||'<div class="empty">Rien d\'assigné.</div>'}</div></div>
+   </div>
+   <div><h2>Derniers commentaires</h2><div class="card" style="padding:4px 16px">${last.map(c=>{const f=FEATURES.find(x=>x.id===c.f);return `<a class="comment" href="#/feature/${f.id}">${av(c.a)}<div><div><span class="cname">${PEOPLE[c.a].n}</span> <span class="tag">sur</span> <span style="font-weight:500;color:var(--accent)">${esc(f.title)}</span></div><div class="sub" style="margin-top:2px">${esc(c.t)}</div></div></a>`}).join("")}</div></div>
+  </div>`)},
+
+sprints(){
+  const order={active:0,planned:1,completed:2};
+  return shell("sprints",`<div class="head"><div><h1>Sprints</h1><div class="sub">Cliquez sur un sprint pour voir ses features.</div></div><a class="btn primary" href="#/sprint/new">＋ Nouveau sprint</a></div>
+  <div class="grid">${[...SPRINTS].sort((a,b)=>order[a.status]-order[b.status]).map(s=>{const fs=sprintFeat(s.id);return `<a class="card" href="#/sprint/${s.id}" style="display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center${s.status==='active'?';border-color:#C7D2FE':''}">
+   <div><div class="meta" style="margin-bottom:4px"><b style="font-weight:600;font-size:16px">${sprintName(s)}</b>${sbadge(s.status)}<span class="tag">${d(s.start)} → ${d(s.end)}</span></div><div class="sub" style="margin:0">${esc(s.goal)}</div></div>
+   <div><div class="meta" style="justify-content:space-between;margin-bottom:6px"><span class="tag">${fs.length} features</span><span class="tag">${pct(s.id)} %</span></div><div class="progress"><b style="width:${pct(s.id)}%"></b></div></div></a>`}).join("")}</div>`)},
+
+sprint(id){
+  const s=SPRINTS.find(x=>x.id==id);if(!s)return V.sprints();
+  let fs=sort(sprintFeat(s.id));
+  if(state.fMod)fs=fs.filter(f=>f.module==state.fMod);
+  if(state.fPrio)fs=fs.filter(f=>f.priority===state.fPrio);
+  const body=state.view==="list"
+   ?`<div class="list"><div class="row th cols-f"><span>Feature</span><span>Statut</span><span class="hm">Priorité</span><span class="hm">Module</span><span class="hm">Effort</span><span class="hm">Com.</span><span class="hm"></span></div>${fs.map(f=>featRow(f)).join("")||'<div class="empty">Aucune feature.</div>'}</div>`
+   :`<div class="board">${["todo","in_progress","done"].map(k=>{const col=fs.filter(f=>f.status===k);return `<div><div class="colh">${badge(k)}<span class="tag">${col.length}</span></div><div class="col">${col.map(f=>`<a class="card fcard" href="#/feature/${f.id}"><div class="title">${esc(f.title)}</div><div class="meta" style="gap:10px">${prio(f.priority)}${mod(f.module)}<span style="margin-left:auto" class="meta">${comIco(ncom(f.id))}${av(f.who)}</span></div></a>`).join("")}</div></div>`}).join("")}</div>`;
+  return shell("sprints",`<div class="crumbs"><a href="#/sprints">Sprints</a> › ${sprintName(s)}</div>
+  <div class="head"><div><div class="meta"><h1>${sprintName(s)}</h1>${sbadge(s.status)}</div><div class="sub">${esc(s.goal)} · ${d(s.start)} → ${d(s.end)}</div>
+   <div style="width:260px;margin-top:12px"><div class="progress"><b style="width:${pct(s.id)}%"></b></div><span class="tag">${pct(s.id)} % terminé · ${sprintFeat(s.id).length} features</span></div></div>
+   <div class="meta"><a class="btn" href="#/sprint/${s.id}/edit">Modifier</a><a class="btn primary" href="#/feature/new?sprint=${s.id}">＋ Ajouter une feature</a></div></div>
+  <div class="toolbar"><div class="seg"><button class="${state.view==='list'?'on':''}" onclick="set({view:'list'})">☰ Liste</button><button class="${state.view==='board'?'on':''}" onclick="set({view:'board'})">▦ Tableau</button></div>
+   <select class="field" onchange="set({fMod:this.value})"><option value="">Tous les modules</option>${Object.entries(MODULES).map(([k,m])=>`<option value="${k}" ${state.fMod==k?'selected':''}>${m.n}</option>`).join("")}</select>
+   <select class="field" onchange="set({fPrio:this.value})"><option value="">Toutes priorités</option>${PR_ORDER.map(k=>`<option value="${k}" ${state.fPrio===k?'selected':''}>${PR[k][0]}</option>`).join("")}</select></div>
+  ${body}`)},
+
+backlog(){
+  let fs=sort(FEATURES);const q=state.q.toLowerCase();
+  if(q)fs=fs.filter(f=>f.title.toLowerCase().includes(q));
+  if(state.fMod)fs=fs.filter(f=>f.module==state.fMod);
+  if(state.fStat)fs=fs.filter(f=>f.status===state.fStat);
+  if(state.fPrio)fs=fs.filter(f=>f.priority===state.fPrio);
+  if(state.noSprint)fs=fs.filter(f=>!f.sprint);
+  return shell("backlog",`<div class="head"><div><h1>Backlog</h1><div class="sub">Toutes les features, planifiées ou non.</div></div><a class="btn primary" href="#/feature/new">＋ Nouvelle feature</a></div>
+  <div class="toolbar"><input class="field" id="q" placeholder="🔍 Rechercher une feature…" value="${esc(state.q)}" oninput="set({q:this.value},true)" style="width:240px">
+   <select class="field" onchange="set({fMod:this.value})"><option value="">Tous les modules</option>${Object.entries(MODULES).map(([k,m])=>`<option value="${k}" ${state.fMod==k?'selected':''}>${m.n}</option>`).join("")}</select>
+   <select class="field" onchange="set({fStat:this.value})"><option value="">Tous statuts</option>${Object.keys(ST).map(k=>`<option value="${k}" ${state.fStat===k?'selected':''}>${ST[k][0]}</option>`).join("")}</select>
+   <select class="field" onchange="set({fPrio:this.value})"><option value="">Toutes priorités</option>${PR_ORDER.map(k=>`<option value="${k}" ${state.fPrio===k?'selected':''}>${PR[k][0]}</option>`).join("")}</select>
+   <button class="btn ${state.noSprint?'primary':''}" onclick="set({noSprint:!state.noSprint})">Sans sprint</button>
+   <span class="tag">${fs.length} résultat${fs.length>1?'s':''}</span></div>
+  <div class="list"><div class="row th cols-b"><span>Feature</span><span class="hm">Sprint</span><span>Statut</span><span class="hm">Priorité</span><span class="hm">Module</span><span class="hm">Effort</span><span class="hm"></span></div>${fs.map(f=>featRow(f,true)).join("")||'<div class="empty">Aucune feature ne correspond.</div>'}</div>`)},
+
+modules(){
+  return shell("modules",`<div class="head"><div><h1>Modules</h1><div class="sub">Les grandes zones fonctionnelles du produit.</div></div><button class="btn primary" onclick="toast('Création de module : pas encore disponible dans le prototype')">＋ Nouveau module</button></div>
+  <div class="grid g3">${Object.entries(MODULES).map(([k,m])=>{const fs=FEATURES.filter(f=>f.module==k);return `<a class="card" href="#/backlog" onclick="state.fMod='${k}';state.fStat='';state.fPrio='';state.q='';state.noSprint=false">
+   <div class="meta" style="margin-bottom:6px"><i style="width:10px;height:10px;border-radius:50%;background:${m.c}"></i><b style="font-weight:600;font-size:16px">${m.n}</b><span class="tag" style="margin-left:auto">${fs.length} features</span></div>
+   <div class="sub" style="margin:0 0 12px">${m.d}</div>
+   <div class="meta" style="gap:6px">${["backlog","todo","in_progress","done"].map(s=>{const n=fs.filter(f=>f.status===s).length;return n?`<span class="badge" style="background:${ST[s][2]};color:${ST[s][3]}">${n} ${ST[s][0]}</span>`:''}).join("")}</div></a>`}).join("")}</div>`)},
+
+feature(id){
+  const f=FEATURES.find(x=>x.id==id);if(!f)return V.backlog();
+  const s=SPRINTS.find(x=>x.id===f.sprint);const cs=COMMENTS.filter(c=>c.f===f.id);
+  const sel=(key,opts)=>`<select class="field" onchange="upd(${f.id},'${key}',this.value)">${opts}</select>`;
+  return shell(s?"sprints":"backlog",`<div class="crumbs">${s?`<a href="#/sprints">Sprints</a> › <a href="#/sprint/${s.id}">${sprintName(s)}</a>`:`<a href="#/backlog">Backlog</a>`} › ${esc(f.title)}</div>
+  <div class="head"><div><h1>${esc(f.title)}</h1><div class="meta" style="margin-top:8px">${badge(f.status)}${prio(f.priority)}${mod(f.module)}</div></div>
+   <div class="meta"><a class="btn" href="#/feature/${f.id}/edit">Modifier</a></div></div>
+  <div class="grid g2" style="align-items:start">
+   <div class="grid" style="gap:24px">
+    <div class="card"><h2>Description</h2><p style="margin:0;color:var(--muted)">${esc(f.description||'Pas de description.')}</p></div>
+    <div class="card" id="comments"><h2>Commentaires <span class="tag">${cs.length}</span></h2>
+     ${cs.map(c=>`<div class="comment">${av(c.a)}<div><div><span class="cname">${PEOPLE[c.a].n}</span> <span class="tag">· ${c.d}</span></div><div style="margin-top:2px">${esc(c.t)}</div></div></div>`).join("")||'<div class="empty" style="padding:8px 0 16px;text-align:left">Aucun commentaire pour l\'instant. Lancez la discussion !</div>'}
+     <div class="comment" style="border-top:1px solid var(--border)">${av(ME)}<div style="flex:1"><textarea class="field" id="newc" placeholder="Écrire un commentaire…" style="min-height:72px"></textarea><div style="text-align:right;margin-top:8px"><button class="btn primary" onclick="addC(${f.id})">Commenter</button></div></div></div>
+    </div>
+   </div>
+   <div class="card"><h2>Détails</h2><dl class="kv">
+    <dt>Statut</dt><dd>${sel("status",Object.keys(ST).map(k=>`<option value="${k}" ${f.status===k?'selected':''}>${ST[k][0]}</option>`).join(""))}</dd>
+    <dt>Priorité</dt><dd>${sel("priority",PR_ORDER.map(k=>`<option value="${k}" ${f.priority===k?'selected':''}>${PR[k][0]}</option>`).join(""))}</dd>
+    <dt>Sprint</dt><dd>${sel("sprint",`<option value="">Aucun (backlog)</option>`+SPRINTS.map(x=>`<option value="${x.id}" ${f.sprint===x.id?'selected':''}>${sprintName(x)} · ${SST[x.status][0]}</option>`).join(""))}</dd>
+    <dt>Assigné à</dt><dd>${sel("who",`<option value="">Non assigné</option>`+Object.entries(PEOPLE).map(([k,p])=>`<option value="${k}" ${f.who===k?'selected':''}>${p.n}</option>`).join(""))}</dd>
+    <dt>Module</dt><dd>${mod(f.module)}</dd>
+    <dt>Effort</dt><dd>${EFF[f.effort]||'—'}</dd>
+    <dt>Impact</dt><dd>${IMP[f.impact]}</dd>
+    <dt>Créée le</dt><dd class="tag">${d(f.created)}</dd></dl></div>
+  </div>`)},
+
+featureForm(id,pre){
+  const f=id?FEATURES.find(x=>x.id==id):{title:"",description:"",status:"todo",priority:"medium",effort:"m",impact:"medium",module:1,sprint:pre?+pre:null,who:null};
+  const back=id?`#/feature/${id}`:(pre?`#/sprint/${pre}`:"#/backlog");
+  const opt=(o,v)=>Object.entries(o).map(([k,l])=>`<option value="${k}" ${String(v)===String(k)?'selected':''}>${Array.isArray(l)?l[0]:(l.n||l)}</option>`).join("");
+  return shell(f.sprint?"sprints":"backlog",`<div class="crumbs"><a href="${back}">← Retour</a></div>
+  <div class="head"><h1>${id?'Modifier la feature':'Nouvelle feature'}</h1></div>
+  <form class="card" style="max-width:640px;display:grid;gap:16px" onsubmit="saveF(event,${id||0})">
+   <label class="l">Titre *<input class="field" name="title" required placeholder="Ex. Export CSV des factures" value="${esc(f.title)}"></label>
+   <label class="l">Description<textarea class="field" name="description" placeholder="Quel problème cette feature résout-elle ?">${esc(f.description||'')}</textarea></label>
+   <div class="grid" style="grid-template-columns:1fr 1fr">
+    <label class="l">Module<select class="field" name="module">${opt(MODULES,f.module)}</select></label>
+    <label class="l">Sprint<select class="field" name="sprint"><option value="">Aucun (backlog)</option>${SPRINTS.map(s=>`<option value="${s.id}" ${f.sprint===s.id?'selected':''}>${sprintName(s)} · ${SST[s.status][0]}</option>`).join("")}</select></label>
+    <label class="l">Statut<select class="field" name="status">${opt(ST,f.status)}</select></label>
+    <label class="l">Priorité<select class="field" name="priority">${opt(PR,f.priority)}</select></label>
+    <label class="l">Effort<select class="field" name="effort">${opt(EFF,f.effort)}</select></label>
+    <label class="l">Impact<select class="field" name="impact">${opt(IMP,f.impact)}</select></label>
+    <label class="l">Assigné à<select class="field" name="who"><option value="">Non assigné</option>${opt(PEOPLE,f.who)}</select></label>
+   </div>
+   <div class="meta" style="justify-content:flex-end"><a class="btn ghost" href="${back}">Annuler</a><button class="btn primary">Enregistrer</button></div>
+  </form>`)},
+
+sprintForm(id){
+  const s=id?SPRINTS.find(x=>x.id==id):{goal:"",start:"2026-03-09",end:"2026-03-20",status:"planned"};
+  const back=id?`#/sprint/${id}`:"#/sprints";
+  return shell("sprints",`<div class="crumbs"><a href="${back}">← Retour</a></div>
+  <div class="head"><h1>${id?'Modifier '+sprintName(s):'Nouveau sprint'}</h1></div>
+  <form class="card" style="max-width:520px;display:grid;gap:16px" onsubmit="saveS(event,${id||0})">
+   <label class="l">Objectif<input class="field" name="goal" placeholder="Ex. Lancer l'onboarding V2" value="${esc(s.goal)}"></label>
+   <div class="grid" style="grid-template-columns:1fr 1fr"><label class="l">Début *<input class="field" type="date" name="start" required value="${s.start}"></label><label class="l">Fin *<input class="field" type="date" name="end" required value="${s.end}"></label></div>
+   <label class="l">Statut<select class="field" name="status">${Object.entries(SST).map(([k,v])=>`<option value="${k}" ${s.status===k?'selected':''}>${v[0]}</option>`).join("")}</select></label>
+   <div class="meta" style="justify-content:flex-end"><a class="btn ghost" href="${back}">Annuler</a><button class="btn primary">Enregistrer</button></div>
+  </form>`)}
+};
+
+// ---- Interactions (en mémoire uniquement) ----
+function toast(m){const h=document.getElementById("hint");h.textContent=m;h.classList.add("show");clearTimeout(h._t);h._t=setTimeout(()=>h.classList.remove("show"),2200)}
+function set(p,keepFocus){Object.assign(state,p);render();if(keepFocus){const q=document.getElementById("q");q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
+function upd(id,k,v){const f=FEATURES.find(x=>x.id===id);f[k]=k==="sprint"?(v?+v:null):(v||null);toast("Modifié (prototype : non enregistré en base)");render()}
+function addC(id){const t=document.getElementById("newc").value.trim();if(!t)return toast("Écrivez d'abord un commentaire");COMMENTS.push(C(id,ME,t,"à l'instant"));render();toast("Commentaire ajouté")}
+function saveF(e,id){e.preventDefault();const v=Object.fromEntries(new FormData(e.target));v.module=+v.module;v.sprint=v.sprint?+v.sprint:null;v.who=v.who||null;
+  if(id){Object.assign(FEATURES.find(x=>x.id===id),v)}else{id=Math.max(...FEATURES.map(f=>f.id))+1;FEATURES.push({...v,id,created:"2026-02-12"})}
+  toast("Feature enregistrée");location.hash="#/feature/"+id}
+function saveS(e,id){e.preventDefault();const v=Object.fromEntries(new FormData(e.target));
+  if(id){Object.assign(SPRINTS.find(x=>x.id===id),v)}else{id=Math.max(...SPRINTS.map(s=>s.id))+1;SPRINTS.push({...v,id})}
+  toast("Sprint enregistré");location.hash="#/sprint/"+id}
+
+function render(){
+  const [path,qs]=(location.hash.slice(2)||"").split("?");const p=path.split("/");const pre=new URLSearchParams(qs||"").get("sprint");
+  let html;
+  if(p[0]==="login")html=V.login();
+  else if(p[0]==="sprints")html=V.sprints();
+  else if(p[0]==="sprint")html=p[1]==="new"?V.sprintForm():p[2]==="edit"?V.sprintForm(+p[1]):V.sprint(+p[1]);
+  else if(p[0]==="backlog")html=V.backlog();
+  else if(p[0]==="modules")html=V.modules();
+  else if(p[0]==="feature")html=p[1]==="new"?V.featureForm(null,pre):p[2]==="edit"?V.featureForm(+p[1]):V.feature(+p[1]);
+  else html=V.home();
+  document.getElementById("root").innerHTML=html;
+}
+let lastPath="";
+addEventListener("hashchange",()=>{const p=location.hash.split("/")[1]||"";if(p!==lastPath&&!(lastPath==="sprint"&&p==="feature")){state.fPrio="";if(p!=="backlog"){state.fMod=""}}lastPath=p;scrollTo(0,0);render()});
+render();
+</script>
+</body>
+</html>
