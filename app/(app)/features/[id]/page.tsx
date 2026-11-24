@@ -81,7 +81,7 @@ export default async function FeaturePage({ params }: PageProps<"/features/[id]"
                 </li>
               ))}
             </ul>
-            <CommentForm featureId={feature.id} people={people.map((p) => ({ id: p.id, name: fullName(p) }))} />
+            <CommentForm featureId={feature.id} />
           </Card>
         </div>
 

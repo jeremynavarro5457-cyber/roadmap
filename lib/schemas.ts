@@ -29,6 +29,11 @@ export type SprintInput = z.infer<typeof sprintSchema>
 
 export const commentSchema = z.object({
   content: z.string().trim().min(1, "Écrivez un commentaire").max(2000),
-  author_id: z.string().min(1, "Choisissez l'auteur"),
 })
 export type CommentInput = z.infer<typeof commentSchema>
+
+export const loginSchema = z.object({
+  email: z.string().trim().email("Email invalide"),
+  password: z.string().min(1, "Mot de passe obligatoire"),
+})
+export type LoginInput = z.infer<typeof loginSchema>

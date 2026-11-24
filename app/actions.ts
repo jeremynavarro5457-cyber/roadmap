@@ -66,7 +66,10 @@ export async function saveSprint(input: SprintInput) {
 export async function addComment(featureId: number, input: CommentInput) {
   const values = commentSchema.parse(input)
   const supabase = await createClient()
-  const { error } = await supabase.from("comments").insert({ ...values, feature_id: featureId })
+  // L'auteur est l'utilisateur connecté (lu côté serveur, impossible à falsifier depuis le navigateur)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Vous devez être connecté." }
+  const { error } = await supabase.from("comments").insert({ ...values, feature_id: featureId, author_id: user.id })
   if (error) return { error: error.message }
   revalidatePath(`/features/${featureId}`)
   return { error: null }
