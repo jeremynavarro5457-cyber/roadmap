@@ -64,7 +64,8 @@ Ce que l'on sait déjà, avant la red team. Chaque point a été vérifié par u
 5. **Le rôle ne peut pas être modifié par l'utilisateur.** *Test : Marie n'a pas pu se passer admin.* ✅
 6. **Les droits SQL par défaut de Supabase** donnent au rôle `anon` des privilèges sur les tables (dont `TRUNCATE`). RLS bloque lecture et écriture (*test : un visiteur lit 0 ligne et ne peut pas créer*), mais `TRUNCATE` n'est pas soumis à RLS. L'API REST de Supabase ne l'expose pas, donc ce n'est pas exploitable par ce chemin, mais on peut retirer ces droits pour fermer la porte.
 7. **Le bucket `avatars` est public** : quiconque connaît le lien d'une photo la voit, même sans compte. C'est voulu (photos de profil), mais il ne faut y mettre que des photos de profil.
-8. **Aucune inscription ouverte** : les comptes se créent à la main dans Supabase. Si on ouvre l'inscription, tout inconnu inscrit pourra **lire toute la roadmap** (la lecture est ouverte à tout membre connecté).
+8. **Les fonctions Postgres s'exécutent avec les droits de l'utilisateur** (elles ne sont pas `security definer`), donc RLS s'y applique. Conséquence pour `move_pending_to_next_sprint` : *test : si un simple membre la lance, seules les features dont il est responsable sont déplacées (2 sur 4), sans message d'erreur.* L'app réserve donc le bouton aux admins. À noter aussi : la fonction déplace **toutes** les features non terminées, y compris « Backlog » et « Annulé », et remet leur statut à « À faire ».
+9. **Aucune inscription ouverte** : les comptes se créent à la main dans Supabase. Si on ouvre l'inscription, tout inconnu inscrit pourra **lire toute la roadmap** (la lecture est ouverte à tout membre connecté).
 
 ## 6. Attaques testées
 

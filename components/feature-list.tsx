@@ -2,10 +2,10 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { StatusBadge, PriorityBadge, ModuleDot, Avatar, CommentCount } from "@/components/badges"
 import { EFFORT_LABELS } from "@/lib/labels"
-import { commentCount, type FeatureWithRelations } from "@/lib/data"
+import { commentCount, type FeatureListItem } from "@/lib/data"
 
 // Liste de features en lignes cliquables. showSprint ajoute la colonne Sprint (utile dans le backlog).
-export function FeatureList({ features, showSprint = false }: { features: FeatureWithRelations[]; showSprint?: boolean }) {
+export function FeatureList({ features, showSprint = false }: { features: FeatureListItem[]; showSprint?: boolean }) {
   const cols = showSprint
     ? "md:grid-cols-[minmax(180px,1fr)_80px_100px_100px_140px_50px_110px_32px_16px]"
     : "md:grid-cols-[minmax(180px,1fr)_100px_100px_140px_50px_110px_32px_16px]"

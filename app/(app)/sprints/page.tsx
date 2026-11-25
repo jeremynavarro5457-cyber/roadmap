@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PageHeader } from "@/components/page-header"
 import { SprintStatusBadge, ProgressBar } from "@/components/badges"
-import { getFeatures, getSprints, progress } from "@/lib/data"
+import { getFeatures, progress } from "@/lib/data"
+import { getSprintsWithCount } from "@/lib/rpc"
 import { formatDate } from "@/lib/labels"
 import { cn } from "@/lib/utils"
 
 const ORDER: Record<string, number> = { active: 0, planned: 1, completed: 2 }
 
 export default async function SprintsPage() {
-  const [sprints, features] = await Promise.all([getSprints(), getFeatures()])
+  // Fonction Postgres : sprints + nombre de features de chacun + nombre de features sans sprint
+  const [{ sprints, backlog_count }, features] = await Promise.all([getSprintsWithCount(), getFeatures()])
   // Le sprint actif en premier, puis les planifiés, puis les terminés
   const sorted = [...sprints].sort((a, b) => ORDER[a.status] - ORDER[b.status])
 
@@ -39,7 +41,7 @@ export default async function SprintsPage() {
                   </div>
                   <div>
                     <div className="mb-1.5 flex justify-between text-xs text-subtle">
-                      <span>{fs.length} features</span><span>{progress(fs)} %</span>
+                      <span>{s.feature_count} features</span><span>{progress(fs)} %</span>
                     </div>
                     <ProgressBar value={progress(fs)} />
                   </div>
@@ -48,6 +50,18 @@ export default async function SprintsPage() {
             </li>
           )
         })}
+        <li>
+          {/* Les features qui n'ont pas encore de sprint */}
+          <Link href="/backlog?nosprint=1">
+            <Card className="flex-row items-center justify-between gap-4 p-4">
+              <div>
+                <span className="text-base font-semibold">Backlog</span>
+                <p className="text-sm text-muted-foreground">Features pas encore planifiées dans un sprint.</p>
+              </div>
+              <span className="font-mono text-sm text-subtle">{backlog_count} features</span>
+            </Card>
+          </Link>
+        </li>
       </ul>
     </>
   )

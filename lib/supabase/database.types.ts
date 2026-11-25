@@ -22,6 +22,7 @@ export type Database = {
           created_at: string
           feature_id: number
           id: number
+          updated_at: string | null
         }
         Insert: {
           author_id: string
@@ -29,6 +30,7 @@ export type Database = {
           created_at?: string
           feature_id: number
           id?: number
+          updated_at?: string | null
         }
         Update: {
           author_id?: string
@@ -36,6 +38,7 @@ export type Database = {
           created_at?: string
           feature_id?: number
           id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -67,6 +70,7 @@ export type Database = {
           sprint_id: number | null
           status: string
           title: string
+          updated_at: string | null
         }
         Insert: {
           assigned_to?: string | null
@@ -80,6 +84,7 @@ export type Database = {
           sprint_id?: number | null
           status?: string
           title: string
+          updated_at?: string | null
         }
         Update: {
           assigned_to?: string | null
@@ -93,6 +98,7 @@ export type Database = {
           sprint_id?: number | null
           status?: string
           title?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -125,6 +131,7 @@ export type Database = {
           description: string | null
           id: number
           name: string
+          updated_at: string | null
         }
         Insert: {
           color: string
@@ -132,6 +139,7 @@ export type Database = {
           description?: string | null
           id?: number
           name: string
+          updated_at?: string | null
         }
         Update: {
           color?: string
@@ -139,6 +147,7 @@ export type Database = {
           description?: string | null
           id?: number
           name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -151,6 +160,7 @@ export type Database = {
           id: string
           lastname: string | null
           role: string
+          updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -160,6 +170,7 @@ export type Database = {
           id: string
           lastname?: string | null
           role?: string
+          updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -169,6 +180,7 @@ export type Database = {
           id?: string
           lastname?: string | null
           role?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -180,6 +192,7 @@ export type Database = {
           id: number
           start_date: string
           status: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string
@@ -188,6 +201,7 @@ export type Database = {
           id?: number
           start_date: string
           status?: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string
@@ -196,12 +210,19 @@ export type Database = {
           id?: number
           start_date?: string
           status?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
     }
     Views: { [_ in never]: never }
-    Functions: { [_ in never]: never }
+    Functions: {
+      get_features_with_comments_count: { Args: { p_module_id: number }; Returns: Json }
+      get_modules_with_count: { Args: never; Returns: Json }
+      get_sprint_summary: { Args: { p_sprint_id: number }; Returns: Json }
+      get_sprints_with_count: { Args: never; Returns: Json }
+      move_pending_to_next_sprint: { Args: { p_sprint_id: number }; Returns: Json }
+    }
     Enums: { [_ in never]: never }
     CompositeTypes: { [_ in never]: never }
   }

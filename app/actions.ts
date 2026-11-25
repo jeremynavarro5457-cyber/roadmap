@@ -3,6 +3,9 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+import { getCurrentProfile } from "@/lib/auth"
+import { isAdmin } from "@/lib/permissions"
+import { movePendingToNextSprint as movePendingRpc } from "@/lib/rpc"
 import type { Database } from "@/lib/supabase/database.types"
 import {
   featureSchema, sprintSchema, commentSchema, profileSchema, avatarUrlSchema,
@@ -154,4 +157,17 @@ export async function saveAvatarUrl(url: string) {
   if (data.length === 0) return { error: DENIED }
   revalidatePath("/", "layout")
   return { error: null }
+}
+
+// Reporte les features non terminées d'un sprint vers le sprint suivant (fonction Postgres).
+// Réservé aux admins : pour un simple membre, la sécurité des lignes ne laisserait déplacer
+// que ses propres features, et le report serait incomplet sans que personne ne le voie.
+export async function movePendingToNextSprint(sprintId: number) {
+  if (!isAdmin(await getCurrentProfile())) return { error: DENIED }
+
+  const result = await movePendingRpc(sprintId)
+  if ("error" in result) return { error: result.error }
+
+  revalidatePath("/", "layout")
+  return { error: null, moved: result.moved, destinationSprintId: result.destination_sprint_id }
 }

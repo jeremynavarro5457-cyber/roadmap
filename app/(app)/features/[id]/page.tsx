@@ -131,6 +131,7 @@ export default async function FeaturePage({ params }: PageProps<"/features/[id]"
             <dt className="text-xs font-medium text-subtle">Effort</dt><dd>{feature.effort ? EFFORT_LABELS[feature.effort] : "—"}</dd>
             <dt className="text-xs font-medium text-subtle">Impact</dt><dd>{IMPACT_LABELS[feature.impact]}</dd>
             <dt className="text-xs font-medium text-subtle">Créée le</dt><dd className="text-subtle">{formatDate(feature.created_at)}</dd>
+            {feature.updated_at && <><dt className="text-xs font-medium text-subtle">Mise à jour</dt><dd className="text-subtle">{formatDate(feature.updated_at)}</dd></>}
           </dl>
         </Card>
       </div>

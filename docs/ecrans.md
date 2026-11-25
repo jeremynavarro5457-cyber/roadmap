@@ -26,7 +26,8 @@ Libellés FR : Backlog · À faire · En cours · Terminé · Annulé — Critiq
 
 ## 4. Détail d'un sprint
 - **On voit** : objectif, dates, progression ; ses features en **liste** ou en **tableau** (colonnes À faire / En cours / Terminé), chaque feature avec badge priorité, pastille module, effort, avatar de l'assigné, nb de commentaires.
-- **On peut** : basculer liste / tableau, filtrer par module, priorité ou assigné, ouvrir une feature, ajouter une feature, modifier le sprint.
+- **On peut** : basculer liste / tableau, filtrer par module, priorité ou assigné, ouvrir une feature, ajouter une feature (admin), **reporter les features non terminées au sprint suivant (admin)**, modifier le sprint.
+- **Résumé du sprint** : progression, nombre de features par statut, nombre de features non assignées.
 
 ## 5. Backlog (toutes les features)
 - **On voit** : toutes les features, colonnes sprint, module, statut, priorité, effort, impact, assigné.
@@ -46,7 +47,7 @@ Libellés FR : Backlog · À faire · En cours · Terminé · Annulé — Critiq
 
 ## 9. Modules
 - **On voit** : les modules (couleur, nom, description, nb de features par statut).
-- **On peut** : ouvrir le backlog filtré sur un module, créer / modifier un module.
+- **On peut** : ouvrir la **page d'un module** (`/modules/[id]`) : ses features, avec leur nombre de commentaires.
 
 ## Navigation globale
 Barre latérale partout (sauf connexion) : Tableau de bord · Sprints · Backlog · Modules · Profil.

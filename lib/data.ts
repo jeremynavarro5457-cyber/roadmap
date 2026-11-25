@@ -17,6 +17,12 @@ export async function getFeatures(filters: { sprintId?: number } = {}) {
 
 export type FeatureWithRelations = Awaited<ReturnType<typeof getFeatures>>[number]
 
+// Les champs dont la liste de features a besoin (permet aussi de l'alimenter autrement que par getFeatures)
+export type FeatureListItem = Pick<
+  FeatureWithRelations,
+  "id" | "title" | "status" | "priority" | "effort" | "sprint_id" | "module" | "assignee" | "comments"
+>
+
 export async function getSprints() {
   const supabase = await createClient()
   const { data, error } = await supabase.from("sprints").select("*").order("start_date")

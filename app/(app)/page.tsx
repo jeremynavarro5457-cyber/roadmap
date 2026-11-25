@@ -6,7 +6,8 @@ import { PageHeader } from "@/components/page-header"
 import { FeatureList } from "@/components/feature-list"
 import { StatusBadge, SprintStatusBadge, Avatar, ProgressBar } from "@/components/badges"
 import { createClient } from "@/lib/supabase/server"
-import { getFeatures, getSprints, progress } from "@/lib/data"
+import { getFeatures, getSprints } from "@/lib/data"
+import { getSprintSummary, progressFromSummary } from "@/lib/rpc"
 import { getCurrentProfile } from "@/lib/auth"
 import { canCreateFeature } from "@/lib/permissions"
 import { byPriority, formatDate, fullName } from "@/lib/labels"
@@ -27,7 +28,8 @@ export default async function HomePage() {
   ])
 
   const active = sprints.find((s) => s.status === "active")
-  const sprintFeatures = active ? features.filter((f) => f.sprint_id === active.id) : []
+  // Résumé du sprint actif calculé par une fonction Postgres
+  const summary = active ? await getSprintSummary(active.id) : null
   const inProgress = features.filter((f) => f.status === "in_progress").sort(byPriority)
 
   return (
@@ -39,7 +41,7 @@ export default async function HomePage() {
       />
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <div className="grid content-start gap-6">
-          {active ? (
+          {active && summary ? (
             <Link href={`/sprints/${active.id}`} className="block">
               <Card className="gap-0 p-4 hover:border-input">
                 <div className="mb-2 flex items-center justify-between">
@@ -48,19 +50,19 @@ export default async function HomePage() {
                 </div>
                 <h2 className="text-base font-semibold">Sprint {active.id} · {active.goal}</h2>
                 <p className="mb-4 text-sm text-muted-foreground">
-                  {formatDate(active.start_date)} → {formatDate(active.end_date)} · {sprintFeatures.length} features
+                  {formatDate(active.start_date)} → {formatDate(active.end_date)} · {summary.total_features} features
                 </p>
                 <div className="mb-4 flex gap-8">
                   {["todo", "in_progress", "done"].map((s) => (
                     <div key={s}>
-                      <div className="text-[1.375rem] leading-7 font-semibold">{sprintFeatures.filter((f) => f.status === s).length}</div>
+                      <div className="text-[1.375rem] leading-7 font-semibold">{summary.by_status[s] ?? 0}</div>
                       <StatusBadge status={s} />
                     </div>
                   ))}
                 </div>
-                <ProgressBar value={progress(sprintFeatures)} />
+                <ProgressBar value={progressFromSummary(summary)} />
                 <div className="mt-2 flex justify-between text-xs">
-                  <span className="text-subtle">{progress(sprintFeatures)} % terminé</span>
+                  <span className="text-subtle">{progressFromSummary(summary)} % terminé</span>
                   <span className="flex items-center gap-1 font-medium text-primary">Voir les features du sprint <ArrowRight className="size-3" /></span>
                 </div>
               </Card>

@@ -15,17 +15,27 @@ Objectif : savoir en un coup d'œil ce que l'équipe fait dans le sprint en cour
 - `comments` : `content`, `feature_id`, `author_id` (→ profiles), `created_at`.
 - `profiles` : `firstname`, `lastname`, `email`, `avatar_url`, `role` (`user` | `admin`), `id` = `auth.users.id`.
 
+Toutes les tables ont aussi `updated_at` (mis à jour par un déclencheur `set_updated_at`).
+
 Types : `lib/supabase/database.types.ts`. Libellés FR et couleurs des statuts / priorités : `lib/labels.ts`.
 
 ## Pages attendues (voir docs/ecrans.md)
 - `/` tableau de bord : sprint actif + progression, répartition par statut, derniers commentaires
 - `/sprints` liste des sprints · `/sprints/new` création · `/sprints/[id]` features du sprint (vue liste / tableau)
 - `/backlog` toutes les features avec recherche et filtres (module, statut, priorité, sans sprint)
-- `/modules` les modules et leurs compteurs
+- `/modules` les modules et leurs compteurs · `/modules/[id]` les features d'un module
 - `/features/[id]` détail + changement de statut/priorité/sprint/assigné + commentaires
 - `/features/new` et `/features/[id]/edit` formulaire feature
 
 Retour du test utilisateur : les commentaires doivent être **visibles dès les listes** (compteur 💬) et accessibles en un clic depuis le haut de la page feature.
+
+## Fonctions Postgres (appelées avec `supabase.rpc`, dans `lib/rpc.ts`)
+Elles renvoient du JSON : on vérifie leur forme avec zod dans `lib/rpc.ts`. Elles s'exécutent avec les droits de l'utilisateur (RLS appliquée).
+- `get_sprints_with_count()` → liste des sprints + `feature_count` + `backlog_count` (page `/sprints`)
+- `get_sprint_summary(p_sprint_id)` → total, répartition par statut, non assignées (détail d'un sprint, tableau de bord)
+- `get_modules_with_count()` → modules + `feature_count` + `total_features` (page `/modules`)
+- `get_features_with_comments_count(p_module_id)` → features d'un module avec `comment_count` (page `/modules/[id]`)
+- `move_pending_to_next_sprint(p_sprint_id)` → déplace les features non terminées vers le sprint suivant, statut remis à `todo` (bouton réservé aux admins)
 
 ## Droits (RLS Supabase activé)
 Les policies sont dans la base ; le front ne fait que **cacher** les boutons inutiles (règles dans `lib/permissions.ts`, profil courant via `lib/auth.ts`).
