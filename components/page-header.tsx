@@ -18,7 +18,7 @@ export function PageHeader({
   return (
     <div className="mb-6">
       {crumbs && (
-        <nav aria-label="Fil d'Ariane" className="mb-2 flex flex-wrap items-center gap-1 text-xs font-medium text-subtle">
+        <nav aria-label="Fil d'Ariane" className="mb-2 flex flex-wrap items-center gap-1 font-mono text-xs font-medium text-subtle">
           {crumbs.map((c, i) => (
             <span key={i} className="flex items-center gap-1">
               {i > 0 && <ChevronRight className="size-3" aria-hidden />}

@@ -36,7 +36,7 @@ Les policies sont dans la base ; le front ne fait que **cacher** les boutons inu
 - Lecture : tout utilisateur connecté
 
 ## Design
-Respecter strictement **docs/design-system.md** (direction « Atelier Précision » : clair, dense, bordures 1 px, accent indigo, la couleur sert le sens). Les tokens sont dans `app/globals.css` (`@theme`). Le prototype de référence est `prototype/index.html`.
+Respecter strictement **docs/design-system.md** (thème « Cacao » : sombre et chaud, fond brun doux, accent ambré, bordures 1 px, la couleur sert le sens). Les tokens sont dans `app/globals.css` (`@theme` et `:root`). Le prototype `prototype/index.html` garde l'ancienne direction claire : il n'est plus la référence visuelle.
 
 ---
 

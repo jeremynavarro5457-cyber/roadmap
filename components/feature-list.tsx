@@ -14,7 +14,7 @@ export function FeatureList({ features, showSprint = false }: { features: Featur
 
   return (
     <div className="overflow-hidden rounded-lg border bg-card">
-      <div className={`${row} h-9 bg-sidebar text-xs font-medium tracking-wide text-subtle uppercase`}>
+      <div className={`${row} h-9 bg-sidebar font-mono text-xs font-medium tracking-wide text-subtle uppercase`}>
         <span>Feature</span>
         {showSprint && <span className={hm}>Sprint</span>}
         <span>Statut</span>
@@ -31,11 +31,11 @@ export function FeatureList({ features, showSprint = false }: { features: Featur
           <li key={f.id} className="border-t">
             <Link href={`/features/${f.id}`} className={`${row} min-h-11 py-1.5 hover:bg-secondary`}>
               <span className="truncate font-medium">{f.title}</span>
-              {showSprint && <span className={`${hm} text-xs text-subtle`}>{f.sprint_id ? `Sprint ${f.sprint_id}` : "—"}</span>}
+              {showSprint && <span className={`${hm} font-mono text-xs text-subtle`}>{f.sprint_id ? `Sprint ${f.sprint_id}` : "—"}</span>}
               <span><StatusBadge status={f.status} /></span>
               <span className={hm}><PriorityBadge priority={f.priority} /></span>
               <span className={hm}><ModuleDot module={f.module} /></span>
-              <span className={`${hm} text-xs text-subtle`}>{f.effort ? EFFORT_LABELS[f.effort] : ""}</span>
+              <span className={`${hm} font-mono text-xs text-subtle`}>{f.effort ? EFFORT_LABELS[f.effort] : ""}</span>
               <span className={hm}><CommentCount count={commentCount(f)} /></span>
               <span className={hm}><Avatar person={f.assignee} /></span>
               <ChevronRight className={`${hm} size-4 text-subtle`} aria-hidden />

@@ -4,48 +4,55 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tokens métier de Roadmap : statuts, priorités, texte discret */
+/* Tokens métier de Roadmap : statuts, priorités, texte discret.
+   Thème « Cacao » : sombre et chaud (voir docs/design-system.md).
+   Les fonds de badges sont semi-transparents (suffixe 33 = 20 %) pour
+   s'adapter au fond de la carte ou de la page qui est derrière. */
 @theme {
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --color-subtle: #A8A29E;               /* text-subtle : métadonnées */
-  --color-accent-hover: #4338CA;
+  --color-subtle: #B5A391;               /* text-subtle : métadonnées */
+  --color-accent-hover: #F5CD8E;
 
   /* Statuts de feature : pastille / fond / texte */
-  --color-status-backlog: #A8A29E;
-  --color-status-backlog-bg: #F5F5F4;
-  --color-status-backlog-fg: #57534E;
-  --color-status-todo: #64748B;
-  --color-status-todo-bg: #F1F5F9;
-  --color-status-todo-fg: #334155;
-  --color-status-progress: #D97706;
-  --color-status-progress-bg: #FEF3C7;
-  --color-status-progress-fg: #92400E;
-  --color-status-done: #16A34A;
-  --color-status-done-bg: #DCFCE7;
-  --color-status-done-fg: #166534;
-  --color-status-cancelled: #A8A29E;
-  --color-status-cancelled-bg: #F5F5F4;
-  --color-status-cancelled-fg: #78716C;
+  --color-status-backlog: #A39382;
+  --color-status-backlog-bg: #A3938233;
+  --color-status-backlog-fg: #D8CCBE;
+  --color-status-todo: #7FA6D6;
+  --color-status-todo-bg: #7FA6D633;
+  --color-status-todo-fg: #B4CDEA;
+  --color-status-progress: #F0935A;
+  --color-status-progress-bg: #F0935A33;
+  --color-status-progress-fg: #F8BC92;
+  --color-status-done: #86C98B;
+  --color-status-done-bg: #86C98B33;
+  --color-status-done-fg: #B4E2B7;
+  --color-status-cancelled: #A39382;
+  --color-status-cancelled-bg: #A3938233;
+  --color-status-cancelled-fg: #D2C5B7;
 
   /* Statut "actif" d'un sprint */
-  --color-sprint-active: #4F46E5;
-  --color-sprint-active-bg: #EEF2FF;
-  --color-sprint-active-fg: #4338CA;
+  --color-sprint-active: #E9B15B;
+  --color-sprint-active-bg: #E9B15B33;
+  --color-sprint-active-fg: #F5CD8E;
 
   /* Priorités */
-  --color-prio-critical: #DC2626;
-  --color-prio-critical-bg: #FEE2E2;
-  --color-prio-critical-fg: #991B1B;
-  --color-prio-high: #EA580C;
-  --color-prio-medium: #CA8A04;
-  --color-prio-low: #64748B;
-  --color-prio-bonus: #A8A29E;
+  --color-prio-critical: #F0746A;
+  --color-prio-critical-bg: #F0746A33;
+  --color-prio-critical-fg: #FFB4AC;
+  --color-prio-high: #F0935A;
+  --color-prio-medium: #E5C04B;
+  --color-prio-low: #8FA3B8;
+  --color-prio-bonus: #A39382;
+
+  /* Ombres douces et lueur ambrée (survol des cartes, bouton principal) */
+  --shadow-card: 0 1px 0 #FFFFFF0D inset, 0 8px 24px -12px #00000080;
+  --shadow-glow: 0 0 0 1px #E9B15B66, 0 8px 28px -10px #E9B15B59;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -86,49 +93,57 @@
 }
 
 :root {
-  /* Design system « Atelier Précision » — voir docs/design-system.md */
-  --background: #F7F7F5;          /* bg : fond de l'app */
-  --foreground: #1C1917;          /* text */
-  --card: #FFFFFF;                /* surface */
-  --card-foreground: #1C1917;
-  --popover: #FFFFFF;
-  --popover-foreground: #1C1917;
-  --primary: #4F46E5;             /* accent : action principale, lien, focus */
-  --primary-foreground: #FFFFFF;
-  --secondary: #F2F2EF;           /* surface-hover */
-  --secondary-foreground: #1C1917;
-  --muted: #F2F2EF;
-  --muted-foreground: #57534E;    /* text-muted */
-  --accent: #EEF2FF;              /* accent-soft : élément actif, sélection */
-  --accent-foreground: #4338CA;   /* accent-hover */
-  --destructive: #DC2626;         /* danger */
-  --border: #E7E5E4;
-  --input: #D6D3D1;               /* border-strong : bordure des champs */
-  --ring: #4F46E5;
-  --chart-1: #4F46E5;
-  --chart-2: #16A34A;
-  --chart-3: #D97706;
-  --chart-4: #DC2626;
-  --chart-5: #64748B;
-  --radius: 0.625rem;             /* 10px = radius-lg (cartes) */
-  --sidebar: #FBFBFA;
-  --sidebar-foreground: #57534E;
-  --sidebar-primary: #4F46E5;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #EEF2FF;
-  --sidebar-accent-foreground: #4338CA;
-  --sidebar-border: #E7E5E4;
-  --sidebar-ring: #4F46E5;
+  /* Thème « Cacao » : fond brun doux, cartes un cran plus clair, barre latérale espresso */
+  --background: #3B2F26;          /* fond de l'app : brun doux */
+  --foreground: #F5EDE3;          /* texte crème */
+  --card: #47392F;                /* surface : cartes, tableaux, champs */
+  --card-foreground: #F5EDE3;
+  --popover: #4F4137;
+  --popover-foreground: #F5EDE3;
+  --primary: #E9B15B;             /* accent ambré : action principale, focus */
+  --primary-foreground: #2A1D10;  /* texte sombre sur l'ambre */
+  --secondary: #52443A;           /* survol des lignes et éléments de menu */
+  --secondary-foreground: #F5EDE3;
+  --muted: #52443A;
+  --muted-foreground: #D2C2B2;    /* texte secondaire */
+  --accent: #E9B15B2E;            /* ambre à 18 % : élément actif, sélection */
+  --accent-foreground: #F5CD8E;
+  --destructive: #F0746A;
+  --border: #5F4F43;
+  --input: #6E5C4E;               /* bordure des champs */
+  --ring: #E9B15B;
+  --chart-1: #E9B15B;
+  --chart-2: #86C98B;
+  --chart-3: #F0935A;
+  --chart-4: #F0746A;
+  --chart-5: #7FA6D6;
+  --radius: 0.625rem;
+  --sidebar: #241C16;             /* espresso : plus sombre que le fond */
+  --sidebar-foreground: #D2C2B2;
+  --sidebar-primary: #E9B15B;
+  --sidebar-primary-foreground: #2A1D10;
+  --sidebar-accent: #E9B15B2E;
+  --sidebar-accent-foreground: #F5CD8E;
+  --sidebar-border: #3A2E25;
+  --sidebar-ring: #E9B15B;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    /* Champs date, barres de défilement, menus natifs : version sombre */
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Une lueur ambrée très douce en haut de page, comme une lampe de bureau */
+    background-image: radial-gradient(60rem 30rem at 15% -10%, #E9B15B14, transparent 70%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: #E9B15B59;
   }
 }

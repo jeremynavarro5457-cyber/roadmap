@@ -26,8 +26,8 @@ export function SidebarNav() {
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-sidebar-foreground hover:bg-secondary",
-              active && "bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent"
+              "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm font-medium text-sidebar-foreground hover:bg-card",
+              active && "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-primary/25 hover:bg-sidebar-accent"
             )}
           >
             <Icon className="size-4" aria-hidden />
