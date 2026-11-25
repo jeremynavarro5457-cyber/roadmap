@@ -9,6 +9,8 @@ import { FilterBar } from "@/components/filter-bar"
 import { SprintStatusBadge, ProgressBar } from "@/components/badges"
 import { createClient } from "@/lib/supabase/server"
 import { getFeatures, getModules, progress } from "@/lib/data"
+import { getCurrentProfile } from "@/lib/auth"
+import { canCreateFeature } from "@/lib/permissions"
 import { byPriority, formatDate } from "@/lib/labels"
 
 export default async function SprintPage({ params, searchParams }: PageProps<"/sprints/[id]">) {
@@ -22,7 +24,7 @@ export default async function SprintPage({ params, searchParams }: PageProps<"/s
   const { data: sprint } = await supabase.from("sprints").select("*").eq("id", Number(id)).maybeSingle()
   if (!sprint) notFound()
 
-  const [all, modules] = await Promise.all([getFeatures({ sprintId: sprint.id }), getModules()])
+  const [all, modules, me] = await Promise.all([getFeatures({ sprintId: sprint.id }), getModules(), getCurrentProfile()])
   const features = all
     .filter((f) => !moduleFilter || String(f.module_id) === moduleFilter)
     .filter((f) => !prioFilter || f.priority === prioFilter)
@@ -34,7 +36,8 @@ export default async function SprintPage({ params, searchParams }: PageProps<"/s
         crumbs={[{ href: "/sprints", label: "Sprints" }, { label: `Sprint ${sprint.id}` }]}
         title={<>Sprint {sprint.id} <SprintStatusBadge status={sprint.status} /></>}
         subtitle={`${sprint.goal ?? ""} · ${formatDate(sprint.start_date)} → ${formatDate(sprint.end_date)}`}
-        actions={<Button asChild><Link href={`/features/new?sprint=${sprint.id}`}><Plus /> Ajouter une feature</Link></Button>}
+        // Bouton visible uniquement pour les admins
+        actions={canCreateFeature(me) && <Button asChild><Link href={`/features/new?sprint=${sprint.id}`}><Plus /> Ajouter une feature</Link></Button>}
       >
         <div className="mt-3 w-64">
           <ProgressBar value={progress(all)} />

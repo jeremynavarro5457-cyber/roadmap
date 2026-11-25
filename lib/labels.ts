@@ -56,3 +56,5 @@ export function initials(p: { firstname: string | null; lastname: string | null 
   if (!p) return "–"
   return ((p.firstname?.[0] ?? "") + (p.lastname?.[0] ?? "")).toUpperCase() || "?"
 }
+
+export const ROLE_LABELS: Record<string, string> = { admin: "Administrateur", user: "Membre" }

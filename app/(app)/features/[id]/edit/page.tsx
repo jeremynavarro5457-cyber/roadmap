@@ -1,15 +1,19 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { PageHeader } from "@/components/page-header"
 import { FeatureForm } from "@/components/feature-form"
 import { getFeatureFormOptions } from "@/lib/feature-form-options"
 import { createClient } from "@/lib/supabase/server"
 import { featureSchema } from "@/lib/schemas"
+import { getCurrentProfile } from "@/lib/auth"
+import { canEditFeature } from "@/lib/permissions"
 
 export default async function EditFeaturePage({ params }: PageProps<"/features/[id]/edit">) {
   const { id } = await params
   const supabase = await createClient()
   const { data: f } = await supabase.from("features").select("*").eq("id", Number(id)).maybeSingle()
   if (!f) notFound()
+  // Admin ou responsable assigné uniquement : sinon retour à la fiche en lecture
+  if (!canEditFeature(await getCurrentProfile(), f)) redirect(`/features/${f.id}`)
 
   // Les selects travaillent avec des chaînes : on convertit les valeurs de la base
   const defaultValues = featureSchema.parse({

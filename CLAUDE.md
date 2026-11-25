@@ -27,6 +27,14 @@ Types : `lib/supabase/database.types.ts`. Libellés FR et couleurs des statuts /
 
 Retour du test utilisateur : les commentaires doivent être **visibles dès les listes** (compteur 💬) et accessibles en un clic depuis le haut de la page feature.
 
+## Droits (RLS Supabase activé)
+Les policies sont dans la base ; le front ne fait que **cacher** les boutons inutiles (règles dans `lib/permissions.ts`, profil courant via `lib/auth.ts`).
+- Créer une feature : `admin` uniquement
+- Modifier / supprimer une feature : `admin` OU responsable assigné (`assigned_to`)
+- Modifier un commentaire : son auteur uniquement
+- Profil : on modifie son prénom et son nom ; le **rôle est en lecture seule** (jamais dans le formulaire)
+- Lecture : tout utilisateur connecté
+
 ## Design
 Respecter strictement **docs/design-system.md** (direction « Atelier Précision » : clair, dense, bordures 1 px, accent indigo, la couleur sert le sens). Les tokens sont dans `app/globals.css` (`@theme`). Le prototype de référence est `prototype/index.html`.
 

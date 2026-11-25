@@ -7,14 +7,17 @@ import { FeatureList } from "@/components/feature-list"
 import { StatusBadge, SprintStatusBadge, Avatar, ProgressBar } from "@/components/badges"
 import { createClient } from "@/lib/supabase/server"
 import { getFeatures, getSprints, progress } from "@/lib/data"
+import { getCurrentProfile } from "@/lib/auth"
+import { canCreateFeature } from "@/lib/permissions"
 import { byPriority, formatDate, fullName } from "@/lib/labels"
 
 // Tableau de bord : sprint actif, ce qui est en cours, derniers commentaires.
 export default async function HomePage() {
   const supabase = await createClient()
-  const [sprints, features, { data: comments }] = await Promise.all([
+  const [sprints, features, me, { data: comments }] = await Promise.all([
     getSprints(),
     getFeatures(),
+    getCurrentProfile(),
     supabase
       .from("comments")
       .select("id, content, created_at, feature:features(id, title), author:profiles(firstname, lastname)")
@@ -32,7 +35,7 @@ export default async function HomePage() {
       <PageHeader
         title="Tableau de bord"
         subtitle="Où en est l'équipe aujourd'hui."
-        actions={<Button asChild><Link href="/features/new"><Plus /> Nouvelle feature</Link></Button>}
+        actions={canCreateFeature(me) && <Button asChild><Link href="/features/new"><Plus /> Nouvelle feature</Link></Button>}
       />
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
         <div className="grid content-start gap-6">

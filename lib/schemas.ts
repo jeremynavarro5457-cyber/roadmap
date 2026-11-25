@@ -37,3 +37,11 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Mot de passe obligatoire"),
 })
 export type LoginInput = z.infer<typeof loginSchema>
+
+// Profil : seuls le prénom et le nom sont modifiables. Le rôle n'est volontairement pas
+// dans ce schéma : il ne peut pas être envoyé par le formulaire.
+export const profileSchema = z.object({
+  firstname: z.string().trim().max(60),
+  lastname: z.string().trim().max(60),
+})
+export type ProfileInput = z.infer<typeof profileSchema>

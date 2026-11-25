@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/page-header"
 import { FeatureList } from "@/components/feature-list"
 import { FilterBar } from "@/components/filter-bar"
 import { getFeatures, getModules } from "@/lib/data"
+import { getCurrentProfile } from "@/lib/auth"
+import { canCreateFeature } from "@/lib/permissions"
 import { byPriority } from "@/lib/labels"
 
 // Les filtres sont dans l'URL (?q=…&module=…) : la page reste un Server Component.
@@ -13,7 +15,7 @@ export default async function BacklogPage({ searchParams }: PageProps<"/backlog"
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : "")
   const q = get("q").toLowerCase()
 
-  const [all, modules] = await Promise.all([getFeatures(), getModules()])
+  const [all, modules, me] = await Promise.all([getFeatures(), getModules(), getCurrentProfile()])
   const features = all
     .filter((f) => !q || f.title.toLowerCase().includes(q))
     .filter((f) => !get("module") || String(f.module_id) === get("module"))
@@ -27,7 +29,7 @@ export default async function BacklogPage({ searchParams }: PageProps<"/backlog"
       <PageHeader
         title="Backlog"
         subtitle="Toutes les features, planifiées ou non."
-        actions={<Button asChild><Link href="/features/new"><Plus /> Nouvelle feature</Link></Button>}
+        actions={canCreateFeature(me) && <Button asChild><Link href="/features/new"><Plus /> Nouvelle feature</Link></Button>}
       />
       <FilterBar modules={modules} filters={["q", "module", "status", "priority", "nosprint"]} count={features.length} />
       <FeatureList features={features} showSprint />
