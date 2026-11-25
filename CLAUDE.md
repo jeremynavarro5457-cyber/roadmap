@@ -35,6 +35,10 @@ Les policies sont dans la base ; le front ne fait que **cacher** les boutons inu
 - Profil : on modifie son prénom et son nom ; le **rôle est en lecture seule** (jamais dans le formulaire)
 - Lecture : tout utilisateur connecté
 
+## Photos de profil
+Bucket Supabase Storage **`avatars`** (public, 2 Mo, JPEG/PNG/WebP). Un dossier par utilisateur : `avatars/<user_id>/avatar`. Policies : chacun n'écrit (envoi + remplacement) que dans son propre dossier ; la lecture est publique via le lien (voir `supabase/migrations/20261125000000_avatars_bucket.sql`).
+L'URL est enregistrée dans `profiles.avatar_url` (action `saveAvatarUrl`). Le composant `Avatar` (`components/badges.tsx`) affiche la photo, ou les initiales si elle n'existe pas : l'utiliser partout où un profil apparaît.
+
 ## Design
 Respecter strictement **docs/design-system.md** (thème « Cacao » : sombre et chaud, fond brun doux, accent ambré, bordures 1 px, la couleur sert le sens). Les tokens sont dans `app/globals.css` (`@theme` et `:root`). Le prototype `prototype/index.html` garde l'ancienne direction claire : il n'est plus la référence visuelle.
 

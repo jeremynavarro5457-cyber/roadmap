@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/supabase/database.types"
 import {
-  featureSchema, sprintSchema, commentSchema, profileSchema,
+  featureSchema, sprintSchema, commentSchema, profileSchema, avatarUrlSchema,
   type FeatureInput, type SprintInput, type CommentInput, type ProfileInput,
 } from "@/lib/schemas"
 
@@ -129,6 +129,27 @@ export async function updateProfile(input: ProfileInput) {
     .update({ firstname: values.firstname || null, lastname: values.lastname || null })
     .eq("id", user.id)
     .select("id")
+  if (error) return { error: friendlyError(error) }
+  if (data.length === 0) return { error: DENIED }
+  revalidatePath("/", "layout")
+  return { error: null }
+}
+
+// Enregistre l'adresse de la photo de profil (le fichier est déjà envoyé dans le bucket « avatars »).
+export async function saveAvatarUrl(url: string) {
+  const parsed = avatarUrlSchema.safeParse(url)
+  if (!parsed.success) return { error: "Adresse de photo invalide." }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Vous devez être connecté." }
+
+  // Sécurité : l'adresse doit pointer vers le dossier de CET utilisateur dans le bucket,
+  // pour qu'on ne puisse pas enregistrer n'importe quelle image externe.
+  const allowedPrefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${user.id}/`
+  if (!parsed.data.startsWith(allowedPrefix)) return { error: "Adresse de photo invalide." }
+
+  const { data, error } = await supabase.from("profiles").update({ avatar_url: parsed.data }).eq("id", user.id).select("id")
   if (error) return { error: friendlyError(error) }
   if (data.length === 0) return { error: DENIED }
   revalidatePath("/", "layout")

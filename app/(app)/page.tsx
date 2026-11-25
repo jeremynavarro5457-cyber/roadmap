@@ -20,7 +20,7 @@ export default async function HomePage() {
     getCurrentProfile(),
     supabase
       .from("comments")
-      .select("id, content, created_at, feature:features(id, title), author:profiles(firstname, lastname)")
+      .select("id, content, created_at, feature:features(id, title), author:profiles(firstname, lastname, avatar_url)")
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .limit(5),

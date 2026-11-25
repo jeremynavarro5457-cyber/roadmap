@@ -45,3 +45,5 @@ export const profileSchema = z.object({
   lastname: z.string().trim().max(60),
 })
 export type ProfileInput = z.infer<typeof profileSchema>
+
+export const avatarUrlSchema = z.string().url()

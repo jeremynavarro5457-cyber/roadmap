@@ -1,6 +1,14 @@
 import { Suspense } from "react"
 import { SidebarNav } from "@/components/sidebar-nav"
 import { UserMenu } from "@/components/user-menu"
+import { getCurrentProfile } from "@/lib/auth"
+
+// Charge le profil (donc lit les cookies) : doit être enveloppé dans un <Suspense>
+async function CurrentUserMenu() {
+  const profile = await getCurrentProfile()
+  if (!profile) return null
+  return <UserMenu person={profile} />
+}
 
 // Layout des pages de l'app (groupe "(app)") : barre latérale + contenu.
 // Le dossier entre parenthèses n'apparaît pas dans l'URL.
@@ -17,7 +25,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <SidebarNav />
         </Suspense>
         <div className="mt-auto">
-          <UserMenu />
+          <Suspense>
+            <CurrentUserMenu />
+          </Suspense>
         </div>
       </aside>
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8">{children}</main>

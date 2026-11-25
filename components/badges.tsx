@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -61,14 +62,37 @@ export function ModuleDot({ module }: { module: { name: string; color: string } 
   )
 }
 
-type Person = { firstname: string | null; lastname: string | null } | null
+type Person = { firstname: string | null; lastname: string | null; avatar_url?: string | null } | null
 
-export function Avatar({ person }: { person: Person }) {
+// sm = 24 px (listes, commentaires), lg = 80 px (page profil)
+const AVATAR_SIZES = {
+  sm: { box: "size-6 text-[0.6875rem]", px: 24 },
+  lg: { box: "size-20 text-xl", px: 80 },
+}
+
+// Affiche la photo de profil si l'utilisateur en a une, sinon ses initiales.
+export function Avatar({ person, size = "sm" }: { person: Person; size?: keyof typeof AVATAR_SIZES }) {
+  const { box, px } = AVATAR_SIZES[size]
+
   if (!person) {
-    return <span title="Non assigné" className="grid size-6 shrink-0 place-items-center rounded-full border border-dashed border-input text-xs text-subtle">–</span>
+    return <span title="Non assigné" className={cn("grid shrink-0 place-items-center rounded-full border border-dashed border-input text-subtle", box)}>–</span>
+  }
+  if (person.avatar_url) {
+    // unoptimized : l'image est servie telle quelle par son hébergeur (Supabase Storage ou autre)
+    return (
+      <Image
+        src={person.avatar_url}
+        alt={fullName(person)}
+        title={fullName(person)}
+        width={px}
+        height={px}
+        unoptimized
+        className={cn("shrink-0 rounded-full object-cover", box)}
+      />
+    )
   }
   return (
-    <span title={fullName(person)} className="grid size-6 shrink-0 place-items-center rounded-full bg-accent text-[0.6875rem] font-semibold text-accent-foreground">
+    <span title={fullName(person)} className={cn("grid shrink-0 place-items-center rounded-full bg-accent font-semibold text-accent-foreground", box)}>
       {initials(person)}
     </span>
   )

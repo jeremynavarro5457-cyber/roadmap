@@ -6,11 +6,13 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { LogOut, User } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Avatar } from "@/components/badges"
 import { createClient } from "@/lib/supabase/client"
 
-export function UserMenu() {
+// person : profil de l'utilisateur connecté, chargé côté serveur par le layout
+export function UserMenu({ person }: { person: { firstname: string | null; lastname: string | null; avatar_url: string | null } }) {
   const router = useRouter()
   const [supabase] = useState(() => createClient())
   const [email, setEmail] = useState<string | null>(null)
@@ -34,7 +36,7 @@ export function UserMenu() {
     <div className="flex items-center gap-2 border-t px-2 pt-3">
       {/* L'email mène à la page profil */}
       <Link href="/profile" className="flex min-w-0 flex-1 items-center gap-1.5 rounded-md py-1 text-xs text-muted-foreground hover:text-primary" title="Mon profil">
-        <User className="size-3.5 shrink-0" aria-hidden />
+        <Avatar person={person} />
         <span className="truncate">{email ?? "Mon profil"}</span>
       </Link>
       <Button variant="ghost" size="icon-sm" onClick={signOut} aria-label="Se déconnecter" title="Se déconnecter">

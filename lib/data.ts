@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 // Les jointures (module, assigné, commentaires) utilisent les clés étrangères existantes.
 
 export const FEATURE_SELECT =
-  "*, module:modules(id, name, color), assignee:profiles!features_assigned_to_fkey(id, firstname, lastname), comments(count)"
+  "*, module:modules(id, name, color), assignee:profiles!features_assigned_to_fkey(id, firstname, lastname, avatar_url), comments(count)"
 
 export async function getFeatures(filters: { sprintId?: number } = {}) {
   const supabase = await createClient()

@@ -23,7 +23,7 @@ export default async function FeaturePage({ params }: PageProps<"/features/[id]"
   const supabase = await createClient()
   const { data: feature } = await supabase
     .from("features")
-    .select("*, module:modules(name, color), comments(id, content, created_at, author_id, author:profiles(firstname, lastname))")
+    .select("*, module:modules(name, color), comments(id, content, created_at, author_id, author:profiles(firstname, lastname, avatar_url))")
     .eq("id", Number(id))
     .order("created_at", { referencedTable: "comments" })
     .order("id", { referencedTable: "comments" })

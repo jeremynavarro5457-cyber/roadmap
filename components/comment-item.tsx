@@ -15,7 +15,7 @@ import { updateComment } from "@/app/actions"
 type Props = {
   featureId: number
   comment: { id: number; content: string; created_at: string }
-  author: { firstname: string | null; lastname: string | null } | null
+  author: { firstname: string | null; lastname: string | null; avatar_url: string | null } | null
   authorName: string
   // Calculé côté serveur (canEditComment) : seul l'auteur voit le bouton « Modifier »
   canEdit: boolean

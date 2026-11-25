@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { PageHeader } from "@/components/page-header"
 import { ProfileForm } from "@/components/profile-form"
+import { AvatarUpload } from "@/components/avatar-upload"
 import { getCurrentProfile } from "@/lib/auth"
 import { ROLE_LABELS, formatDate } from "@/lib/labels"
 
@@ -14,6 +15,8 @@ export default async function ProfilePage() {
       <PageHeader title="Mon profil" subtitle="Vos informations personnelles." />
       <Card className="max-w-xl gap-4 p-4">
         {/* Informations en lecture seule : l'email vient de la connexion, le rôle est attribué par un admin */}
+        <AvatarUpload userId={profile.id} person={profile} />
+        <hr />
         <dl className="grid grid-cols-[100px_1fr] items-center gap-x-2 gap-y-3 text-sm">
           <dt className="text-xs font-medium text-subtle">Email</dt>
           <dd>{profile.email}</dd>
