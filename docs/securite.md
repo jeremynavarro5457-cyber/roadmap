@@ -29,7 +29,7 @@
 | `sprints` | ✅ tout membre connecté | ❌ personne | ❌ personne | ❌ personne |
 | `modules` | ✅ tout membre connecté | ❌ personne | ❌ personne | ❌ personne |
 | `features` | ✅ tout membre connecté | **Admin** uniquement | **Admin** ou **responsable assigné** | **Admin** ou **responsable assigné** |
-| `comments` | ✅ tout membre connecté | ✅ tout membre connecté (voir point d'attention n° 1) | Son **auteur** uniquement | ❌ personne |
+| `comments` | ✅ tout membre connecté | ✅ tout membre connecté, **uniquement à son propre nom** | Son **auteur** uniquement | ❌ personne |
 | Fichiers `avatars` (Storage) | ✅ lien public pour tous · liste des fichiers pour les membres connectés | Un membre, **dans son dossier** `avatars/<son id>/` uniquement | Un membre, **dans son dossier** uniquement | ❌ personne |
 
 Pour les tables marquées « ❌ personne », les données se gèrent aujourd'hui uniquement depuis le dashboard Supabase (ou avec la clé `service_role`, qui contourne RLS et ne doit jamais apparaître dans l'app).
@@ -47,7 +47,7 @@ Pour les tables marquées « ❌ personne », les données se gèrent aujourd'hu
 | `features` | Admins and assignees can update features | modification | rôle `admin` **ou** `assigned_to = auth.uid()` |
 | `features` | Admins and assignees can delete features | suppression | rôle `admin` **ou** `assigned_to = auth.uid()` |
 | `comments` | Authenticated users can read comments | lecture | toujours vraie (connecté) |
-| `comments` | Authenticated users can insert comments | création | toujours vraie (connecté) — **ne vérifie pas l'auteur** |
+| `comments` | Authenticated users can insert comments | création | `author_id = auth.uid()` (on ne peut écrire qu'en son nom) |
 | `comments` | Authors can update their own comments | modification | `author_id = auth.uid()` |
 | `storage.objects` | Authenticated users can read avatars | lecture | bucket `avatars`, connecté |
 | `storage.objects` | Users can upload to their own avatar folder | création | bucket `avatars` et 1er dossier du chemin = `auth.uid()` |
@@ -57,8 +57,7 @@ Pour les tables marquées « ❌ personne », les données se gèrent aujourd'hu
 
 Ce que l'on sait déjà, avant la red team. Chaque point a été vérifié par un test.
 
-1. **⚠️ Faille : on peut écrire un commentaire au nom de quelqu'un d'autre.** La policy de création des commentaires accepte n'importe quoi (`with check (true)`). L'app renseigne bien l'auteur depuis la session, mais un utilisateur qui appelle directement l'API Supabase peut envoyer `author_id` d'un collègue. *Test : Marie a pu créer un commentaire signé Thomas.*
-   **Correctif possible :** remplacer la condition par `author_id = auth.uid()`.
+1. **✅ Corrigé le 25/11/2026 : on pouvait écrire un commentaire au nom de quelqu'un d'autre.** La policy de création acceptait n'importe quoi (`with check (true)`) : en appelant directement l'API Supabase, Marie avait pu créer un commentaire signé Thomas. La condition est maintenant `author_id = auth.uid()` (migration `20261125010000_fix_comments_insert_author.sql`). *Tests après correctif : écrire à son nom ✅ autorisé · écrire au nom d'un autre ❌ refusé · changer l'auteur d'un commentaire existant ❌ refusé · visiteur non connecté ❌ refusé.*
 2. **Un responsable ne peut pas passer sa feature à quelqu'un d'autre.** Sans clause `with check`, Postgres réutilise la condition de modification sur la nouvelle ligne : après le changement, `assigned_to` n'est plus l'utilisateur, donc c'est refusé. *Test : refusé pour Marie.* Seul un admin peut réassigner. Le sélecteur « Assigné à » de l'app est pourtant affiché au responsable : il verra le message « Vous n'avez pas le droit… ».
 3. **Aucune policy d'écriture sur `sprints` et `modules`.** Personne ne peut les créer ni les modifier via l'API, admin compris. Le bouton « Nouveau sprint » de l'app échoue donc pour tout le monde.
 4. **Impossible de supprimer une feature qui a des commentaires.** Il n'y a pas de policy de suppression sur `comments` et le lien entre les deux tables n'est pas en cascade. *Test : Marie n'a pas pu supprimer son propre commentaire.* C'est le cas de 8 features sur 20.
@@ -78,7 +77,7 @@ Ce que l'on sait déjà, avant la red team. Chaque point a été vérifié par u
 | | | | | | |
 
 **Pistes pour démarrer** (tirées des points d'attention) :
-- Écrire un commentaire avec l'`author_id` d'un autre utilisateur (point 1).
+- Écrire un commentaire avec l'`author_id` d'un autre utilisateur (point 1, corrigé : vérifier que le correctif tient bien).
 - Se passer admin en modifiant `profiles.role` (point 5).
 - Modifier la feature d'un collègue, ou réassigner une feature (point 2).
 - Envoyer un fichier dans le dossier d'un autre utilisateur, ou un fichier qui n'est pas une image, ou de plus de 2 Mo.
